@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>地址列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/address.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">地址列表</div>
+        </header>
+        <div id="main" class="main_padded_t margin_t_5">
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <!-- 从此循环 -->
+                <div class="padded_l_10 padded_t_10 padded_r_10 bg_f radius_4 margin_t_5 relative" v-for="(i,index) in address_list" :key="index" @click="addressedit(i.id, i.full_name, i.mobile, i.province, i.city, i.county, i.address, i.default)">
+                    <div class="list">
+                        <div class="list_img float_l relative">
+                            <img class="list_logo" src="../../res/images/user/user_index/7.svg" alt="">
+                        </div>
+                        <div class="list_info fs_14 color_999 float_l">
+                            <i class="aui-iconfont aui-icon-trash" @click="del(i.id)"></i>
+                            <p class="text_1">
+                                <span class="default_address fff radius_4 m_back fs_12" v-if="i.default == 1">默认地址</span>
+                                <span>{{i.full_name}} {{i.mobile}}</span>
+                            </p>
+                            <p class="text_1">{{i.city}}{{i.county}}{{i.address}}</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="no_list" v-if="address_list.length == 0">
+                    <img src="../../res/images/no_data.png" alt="">
+                </div>
+            </div>
+            <div class="footer_con padded_10">
+                <div class="footer_btn m_back fff radius_4 center padded_t_10 padded_b_5" @click="add_address">
+                    新增地址
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                address_list: [],
+                text: api.pageParam.text
+            },
+            mounted: function() {
+                this.address_list_();
+            },
+            methods: {
+                address_list_: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Address',
+                        name: '用户地址',
+                        query: {},
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.address_list = ret.data.address;
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                    api.addEventListener({
+                        name: 'address_return'
+                    }, function(ret, err) {
+                        if (ret.value.text == 1) {
+                            window.location.reload();
+                        }
+                    });
+                },
+                add_address: function() {
+                    api.openWin({
+                        name: 'add_address',
+                        url: './add_address.html',
+                        pageParam: {
+
+                        }
+                    });
+                },
+                addressedit: function(id, full_name, mobile, province, city, county, address, default_) {
+                    if (this.text == 1) {
+                        api.closeWin();
+                        api.sendEvent({
+                            name: 'login_return',
+                            extra: {
+                                text: {'id': id, 'full_name': full_name, 'mobile': mobile, 'province': province, 'city': city, 'county': county, 'address': address, 'default': default_}
+                            }
+                        });
+
+                    } else {
+                        // api.openWin({
+                        //     name: 'addressedit',
+                        //     url: './addressedit.html',
+                        //     pageParam: {
+                        //         id: id,
+                        //         full_name: full_name,
+                        //         mobile: mobile,
+                        //         province: province,
+                        //         city: city,
+                        //         county: county,
+                        //         address: address,
+                        //         default_: default_
+                        //     }
+                        // });
+                    }
+                },
+                del: function(id) {
+                    this_ = this;
+                    api.confirm({
+                        title: '确认删除此订单',
+                        // msg: '',
+                        buttons: ['确定', '取消']
+                    }, function(ret, err) {
+                        var index = ret.buttonIndex;
+                        if (index == 1) {
+                            utils.request({
+                                url: utils.base_domain + '/api/user/AddressDelete',
+                                name: '用户地址删除',
+                                query: {
+                                    id: id
+                                },
+                                success: function(ret) {
+                                    if (ret.code == 1) {
+                                        api.toast({
+                                            msg: '已删除',
+                                            duration: 2000,
+                                            location: 'bottom'
+                                        });
+                                        this_.address_list_();
+                                    }
+                                },
+                                error: function(err) {
+                                    console.log('err' + JSON.stringify(err));
+                                }
+                            });
+                        }
+                    });
+                    event.stopPropagation();
+                }
+            }
+        })
+    }
+</script>
+
+</html>

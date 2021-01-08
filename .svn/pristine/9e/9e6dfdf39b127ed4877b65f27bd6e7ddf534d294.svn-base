@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>月结</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/index/monthly.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">月结</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_r_10 padded_l_10 padded_t_10">
+                <div class="fff padded_r_10 padded_l_10 padded_t_10 radius_4 today_sale relative">
+                    <p class="fs_14">
+                        <span class="bean_text fs_12 fff">(产品销售奖励费用+礼包利润)<br><span class="fs_16 fw_600 fff">总计</span></span>
+                    </p>
+                    <p class="text_1 fw_600 fs_20 fff">￥{{data.total}}</p>
+                    <!-- <a class="price_out bg_f">2020-07</a> -->
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10 padded_b_10 margin_t_10">
+                <div class="padded_10 bg_f center radius_4">
+                    <div class="width_50 float_l price_info">
+                        <p class="text_1 fs_14 color_333">产品销售奖励费</p>
+                        <p class="text_1">￥{{data.achievement}}</p>
+                    </div>
+                    <div class="width_50 float_l price_info">
+                        <p class="text_1 fs_14 color_333">礼包利润</p>
+                        <p class="text_1">￥{{data.giftAmount}}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_10 bg_f center radius_4">
+                    <div>
+                        <p class="moon_title">
+                            <span class="color_333 fs_14 fw_600 title_text m_price">店铺业绩</span>
+                            <span class="fw_600">￥{{data.giftAmount + data.stockAmount}}</span>
+                        </p>
+                    </div>
+                    <div class="width_50 float_l price_info price_info_ margin_t_10">
+                        <p class="text_1 fs_14 color_333">产品进货</p>
+                        <p class="text_1">￥-{{data.stockAmount}}</p>
+                    </div>
+                    <div class="width_50 float_l price_info margin_t_10">
+                        <p class="text_1 fs_14 color_333">30推广</p>
+                        <p class="text_1">￥{{data.giftAmount}}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_10 bg_f center radius_4">
+                    <div>
+                        <p class="moon_title">
+                            <span class="color_333 fs_14 fw_600 title_text m_price">本月产品销售奖励系数</span>
+                            <span class="fw_600"></span>
+                        </p>
+                    </div>
+                    <!--  进度条  -->
+                    <div class="relative progress margin_t_10 padded_t_10">
+                        <div></div>
+                        <div :style="{width:data.percent + '%'}"></div>
+                        <p class="margin_t_10">{{data.percent}}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_10 bg_f center radius_4">
+                    <div>
+                        <p class="moon_title">
+                            <span class="color_333 fs_14 fw_600 title_text m_price">销售业绩</span>
+                            <span class="fw_600">￥{{data.ChannelStockAmount + data.ChannelGiftAmount}}</span>
+                        </p>
+                    </div>
+                    <div class="width_50 float_l price_info price_info_ margin_t_10">
+                        <p class="text_1 fs_14 color_333">产品销售</p>
+                        <p class="text_1">￥{{data.ChannelStockAmount}}</p>
+                    </div>
+                    <div class="width_50 float_l price_info margin_t_10">
+                        <p class="text_1 fs_14 color_333">礼包销售</p>
+                        <p class="text_1">￥{{data.ChannelGiftAmount}}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                data:[]
+            },
+            mounted: function() {
+                this.ajax();
+            },
+            methods: {
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Monthly',
+                        name: '获取月结信息',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.data = ret.data;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

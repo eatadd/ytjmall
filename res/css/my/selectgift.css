@@ -1,0 +1,232 @@
+.step {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    max-width: 768px;
+    z-index: 2;
+}
+
+.step>div {
+    width: 50%;
+    height: 40px;
+}
+
+.step>div span {
+    position: relative;
+    top: 10px;
+}
+
+.step>div:nth-child(1) {
+    background: url("/merchant/img/user/register_1.png") no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.step>div:nth-child(2) {
+    background: url("/merchant/img/user/register_2.png") no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.pop {
+    left: 10%;
+    width: 80%;
+}
+
+.user_address {
+    max-width: 728px;
+}
+
+.user_address input {
+    width: calc(100% - 70px);
+    font-size: 14px;
+    border: none;
+    outline: none;
+}
+
+.user_address p {
+    padding: 10px 0 !important;
+}
+
+.aad_default {
+    position: relative;
+    top: 5px;
+}
+
+.address_75 {
+    color: #757575;
+}
+
+.user_logo img {
+    width: 80px;
+    margin: 0 auto;
+}
+
+.add_address__ {
+    height: 40px;
+    overflow: hidden;
+}
+
+.margin_top {
+    margin-top: 70px;
+}
+
+.user_top_address {
+    position: absolute;
+    top: 5px;
+}
+
+.user_top_text {
+    position: relative;
+    left: 20px;
+    width: 80px;
+    overflow: hidden;
+}
+
+.pop_info {
+    line-height: 1em;
+    text-align: left;
+}
+
+input {
+    outline: none;
+    border: none;
+    color: #666;
+}
+
+.choose_info {
+    height: 80px;
+}
+
+.choose_logo {
+    height: 80px;
+    width: 80px;
+}
+
+.choose_logo img {
+    width: 80px;
+    height: 80px;
+}
+
+.choose_info p:nth-child(3) {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.choose_order {
+    line-height: 5em;
+    padding-right: 10px;
+}
+
+.choose_order input {
+    margin-top: 100%;
+}
+
+.footer_pay_btn {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.pay_btn {
+    padding: 10px 0;
+    width: 100%;
+}
+
+
+/**/
+
+.address_con {
+    height: 70px;
+    margin-top: 60px;
+}
+
+.address_logo {
+    width: 28px;
+}
+
+.adress_list {
+    padding: 15px 10px 0 10px;
+    height: 45px;
+    overflow: hidden;
+}
+
+.adress_list_act {
+    height: auto !important;
+}
+
+.address_logo img {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: 3px;
+    left: -3px;
+    z-index: 2;
+}
+
+.adress_list div:nth-child(2) {
+    position: relative;
+    top: -5px;
+}
+
+.adress_list_ {
+    padding: 10px 10px 0 10px;
+}
+
+.address_logo_ {
+    width: 30px;
+}
+
+.address_logo_ img {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: -3px;
+}
+
+.adress_list_ div:nth-child(2) {
+    position: relative;
+    top: 0;
+}
+
+.default_address {
+    background: #FD3232;
+    padding: 1px 5px 2px 5px;
+    display: inline-block;
+}
+
+.adress_info {
+    padding-left: 28px;
+    background: #FFF;
+    width: 87.5%;
+}
+
+.choose_address {
+    position: absolute;
+    width: 100%;
+    width: calc(100% - 20px);
+    max-width: 748px;
+    z-index: 2;
+}
+
+.pop_ {
+    width: 80%;
+    position: fixed;
+    top: 10%;
+    left: calc(10% - 10px);
+    display: none;
+    z-index: 3;
+    max-height: 80%;
+    overflow-y: auto;
+}
+
+.pop_ img {
+    width: 90%;
+}
+
+.hide_content img{
+    width: 100%;
+    margin: 0 auto;
+}

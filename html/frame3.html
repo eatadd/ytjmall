@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>消息</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" href="../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../res/css/main.css">
+    <link rel="stylesheet" href="../res/css/info/index.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <!-- <div class="aui-bar aui-bar-btn aui-bar-btn-full">
+            <div class="aui-bar-btn-item" :class="{ 'aui-active': activeClass == index }" v-for="(i,index) in customer" :key="index" @click="info_btn(index)" v-html="i"></div>
+        </div> -->
+        <div class="aui-content aui-margin-b-15">
+            <ul class="aui-list aui-media-list">
+                <li class="aui-list-item aui-list-item-middle" v-for="(i,index) in lists" :key="index" @click="open(i.id , i.username)">
+                    <div class="aui-media-list-item-inner">
+                        <div class="aui-list-item-media wechat-avatar">
+                            <div class="aui-badge" v-text="i.unlook" v-if='i.unlook != 0'></div>
+                            <img :src="i.image_name" />
+                        </div>
+                        <div class="aui-list-item-inner">
+                            <div class="aui-list-item-text">
+                                <div class="aui-list-item-title" v-text="i.username"></div>
+                                <div class="aui-list-item-right" v-text="i.update_date"></div>
+                            </div>
+                            <div class="aui-list-item-text aui-font-size-12" v-text="i.info">
+
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="no_list" v-if="lists.length == 0">
+            <img src="../res/images/no_data.png" alt="">
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../res/vue/vue.js"></script>
+<script type="text/javascript" src="../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        var UILoading = api.require('UILoading');
+        new Vue({
+            el: '#app',
+            data: {
+                customer: ['意向客户', '潜水客户', '在线客户', 'aa客户'],
+                activeClass: 0,
+                start: 0,
+                lists: []
+            },
+            mounted: function() {
+                this.up_loading();
+                this.down_loading();
+                this.ajax();
+                this.init();
+            },
+            methods: {
+                init: function () {
+                    this_ = this;
+                    setInterval(function () {
+                        this_.ajax();
+                    },5000)
+                },
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Customer',
+                        name: '获取用户列表',
+                        query: {
+                            start: 0
+                        },
+                        success: function(ret) {
+                            // console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                this_.start += 10;
+                                this_.lists = ret.data.user;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                open: function(id , name) {
+                    api.openWin({
+                        name: 'info_details',
+                        url: './info/info_details.html',
+                        pageParam: {
+                            id: id,
+                            name: name
+                        }
+                    });
+                },
+                info_btn: function(index) {
+                    this.activeClass = index;
+                },
+                up_loading: function() {
+                    this_ = this;
+                    api.setRefreshHeaderInfo({
+                        visible: true,
+                        loadingImg: '../image/timg.gif',
+                        bgColor: '#ccc',
+                        textColor: '#fff',
+                        textDown: '下拉刷新...',
+                        textUp: '松开刷新...',
+                        showTime: true
+                    }, function(ret, err) {
+                        this_.lists = [];
+                        // this_.start = 0;
+                        // this_.ajax();
+                        setTimeout('api.refreshHeaderLoadDone()', '500');
+                    });
+                },
+                down_loading: function() {
+                    this_ = this;
+                    api.addEventListener({　　
+                        name: 'scrolltobottom',
+                        extra: {
+                            threshold: 50
+                        }
+                    }, function(ret, err) {　　　　
+                        UILoading.flower({
+                            center: {
+                                x: api.winWidth / 2.0,
+                                y: api.winHeight / 2.0
+                            },
+                            size: 30,
+                            fixed: true
+                        }, function(ret) {
+                            // alert(JSON.stringify(ret.id));
+                            this_.ajax();
+                            setTimeout(function() {
+                                var uiloading = api.require('UILoading');
+                                uiloading.closeFlower({
+                                    id: ret.id
+                                });
+                            }, 500)
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

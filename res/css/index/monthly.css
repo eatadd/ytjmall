@@ -1,0 +1,92 @@
+.today_sale {
+    background: url("../../images/index/yun_1.png") no-repeat;
+    background-size: 100% 100%;
+    line-height: 2em;
+}
+
+.today_sale p:nth-child(2) {
+    font-size: 20px;
+}
+
+.price_info {
+    padding-top: 6px;
+}
+
+.price_info:nth-child(1) {
+    border-right: 1px solid #E6E6E6;
+    box-sizing: border-box;
+}
+
+.price_info p:nth-child(2) {
+    font-size: 16px;
+    color: #2D9CDB;
+}
+
+.price_info_ {
+    border-right: 1px solid #E6E6E6;
+    box-sizing: border-box;
+}
+
+.bean_text {
+    position: relative;
+    top: -5px;
+}
+
+.price_out {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    right: 0;
+    color: #2F80ED;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 40px;
+    font-size: 12px;
+    padding: 0 10px 0 18px;
+}
+
+.list_right {
+    float: right;
+    position: relative;
+    top: 8px;
+}
+
+.list_text {
+    position: relative;
+    top: -8px;
+    padding-left: 10px;
+}
+
+.moon_title {
+    text-align: left;
+    border-bottom: 1px solid #E6E6E6;
+    padding-bottom: 5px !important;
+}
+.title_text{
+}
+.moon_title span:nth-child(2) {
+    display: inline-block;
+    float: right;
+    font-size: 14px;
+    position: relative;
+    top:2px;
+}
+
+.title_logo {
+}
+.progress{
+    color: #2D9CDB;
+}
+.progress > div:nth-child(1) {
+    height: 30px;
+    background: #EDEDED;
+    border-radius: 100px;
+}
+
+.progress > div:nth-child(2) {
+    height: 30px;
+    background: #2F80ED;
+    border-radius: 100px;
+    width: 80%;
+    position: absolute;
+    top: 10px;
+}

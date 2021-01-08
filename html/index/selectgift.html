@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>选择礼包</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/selectgift.css">
+</head>
+<style>
+    .isShow_details{
+        position: fixed;
+        height: 100%;
+        top: 0;
+        width: 100%;
+        background: #000;
+        z-index: 3;
+    }
+    .isShow_details>div{
+        padding-top: 70px;
+    }
+</style>
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">选择礼包</div>
+        </header>
+        <div id="main" class="main_padded_t margin_t_10 main_padded_b">
+            <div class="padded_10">
+                <div class="bg_f padded_10 radius_4" @click="user_address">
+                    <p>{{username}} {{mobile}}</p>
+                    <p>{{address}}</p>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_b_10 padded_r_10">
+                <div class="padded_10 bg_f radius_4 center">
+                    <div class="user_logo">
+                        <img src="../../res/images/user/vip.png" alt="">
+                    </div>
+                </div>
+                <!-- <input class="aui-radio" type="radio" value="1" v-model="gender"> -->
+                <div class="padded_10 bg_f radius_4" v-for="(i,index) in list" :key="i.id">
+                    <div class="choose_order float_l">
+                        <input class="aui-radio" type="radio" :value="index" v-model="gender" @click="checked_(i.id)">
+                    </div>
+                    <div>
+                        <div class="float_l vip_con padded_r_5">
+                            <div class="choose_logo" @click="showDetails(i)">
+                                <img :src="utils.base_image + i.image_name" alt="">
+                            </div>
+                        </div>
+                        <div class="choose_info width_50 float_l padded_l_5 relative vip_con">
+                            <p class="text_1 color_333 fs_16">{{i.title}}</p>
+                            <p class="text_1 fs_14 color_999">数量: 1</p>
+                            <p class="text_1 fs_14 m_price padded_l_5">￥{{i.price}}</p>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <!-- <div class="hide_content padded_10" v-html="i.content"></div> -->
+                </div>
+            </div>
+            <div class="padded_10 isShow_details" v-show="isShow" @click="hide">
+                <div class="padded_10" v-html="isContent"></div>
+            </div>
+            <div class="padded_10 footer_pay_btn">
+                <div class="padded_10">
+                    <div class="pay_btn fff fs_16 center radius_4 m_back" @click="go_pay">
+                        支付
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                list: [],
+                picked: 0,
+                id: 1,
+                gender: 0,
+                username: '点击添加地址',
+                mobile: '',
+                address: '',
+                aid: '',
+                gid: '',
+                isShow: false,
+                isContent: '',
+                type: api.pageParam.type
+            },
+            mounted: function() {
+                this.ajax();
+            },
+            methods: {
+                hide: function () {
+                    this.isShow = false;
+                },
+                showDetails: function (e) {
+                    console.log(e);
+                    this.isShow = !e.isShow;
+                    this.isContent = e.content;
+                },
+                user_address: function() {
+                    this_ = this;
+                    api.openWin({
+                        name: 'user_address',
+                        url: './user_address.html',
+                        pageParam: {
+
+                        }
+                    });
+                    api.addEventListener({
+                        name: 'user_address'
+                    }, function(ret, err) {
+                        if (ret) {
+                            // console.log(JSON.stringify(ret));
+                            this_.username = ret.value.ffull_name;
+                            this_.mobile = ret.value.mobile;
+                            this_.address = ret.value.province + ret.value.city + ret.value.county + ret.value.address;
+                            this_.aid = ret.value.aid;
+                        }
+                    });
+                },
+                checked_: function(id) {
+                    this.id = id;
+                },
+                ajax: function() {
+                    this_ = this;
+                    if(this_.type == 1){
+                        utils.request({
+                            url: utils.base_domain + '/api/index/Gift',
+                            name: '获取礼包',
+                            query: {
+                                type: 1
+                            },
+                            success: function(ret) {
+                                if (ret.code == 1) {
+                                    for(i in ret.data){
+                                        ret.data[i].isShow = false;
+                                    }
+                                    this_.list = ret.data;
+                                } else {
+                                    api.toast({
+                                        msg: ret.message,
+                                        duration: 2000,
+                                        location: 'bottom'
+                                    });
+                                }
+                            },
+                            error: function(err) {
+                                console.log('err' + JSON.stringify(err));
+                            }
+                        });
+                    }else {
+                        utils.request({
+                            url: utils.base_domain + '/api/index/Gift',
+                            name: '获取礼包',
+                            query: {
+
+                            },
+                            success: function(ret) {
+                                if (ret.code == 1) {
+                                    for(i in ret.data){
+                                        ret.data[i].isShow = false;
+                                    }
+                                    this_.list = ret.data;
+                                } else {
+                                    api.toast({
+                                        msg: ret.message,
+                                        duration: 2000,
+                                        location: 'bottom'
+                                    });
+                                }
+                            },
+                            error: function(err) {
+                                console.log('err' + JSON.stringify(err));
+                            }
+                        });
+                    }
+                },
+                go_pay: function() {
+                    if (this_.username == '添加地址') {
+                        api.toast({
+                            msg: '请添加地址',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/index/GiftSubmit',
+                        name: '礼包提交接口',
+                        query: {
+                            aid: this_.aid,
+                            mobile: this_.mobile,
+                            gid: this_.id,
+                            uid: $api.getStorage('up_uid') || ''
+                        },
+                        success: function(ret) {
+                            // console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                $api.setStorage('token', ret.data.token.token);
+                                $api.setStorage('auth', ret.data.token.auth);
+                                $api.setStorage('username', ret.data.token.username);
+                                $api.setStorage('image_name', ret.data.token.image_name);
+                                api.openWin({
+                                    name: 'go_pay',
+                                    url: './go_pay.html',
+                                    pageParam: {
+                                        user_id: this_.id,
+                                        gift_id: ret.data.id
+                                    }
+                                });
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

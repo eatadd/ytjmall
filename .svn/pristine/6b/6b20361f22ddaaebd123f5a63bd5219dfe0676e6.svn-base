@@ -1,0 +1,75 @@
+.footer_con {
+    position: fixed;
+    bottom: 0;
+    max-width: 768px;
+    width: 100%;
+}
+
+.footer_btn {
+    width: 100%;
+}
+
+.list_img {
+    width: 35px;
+}
+
+.list_img img {
+    width: 25px;
+    position: relative;
+    top: 6px;
+}
+
+.list_info {
+    width: calc(100% - 35px);
+}
+
+.pop_info {
+    line-height: 3em;
+    font-size: 14px;
+}
+
+input {
+    outline: none;
+    border: none;
+    width: 120px;
+    font-size: 14px;
+}
+
+.address_75 {
+    position: relative;
+    top: -5px;
+}
+
+.pop {
+    left: 10% !important;
+    width: 80% !important;
+}
+
+.pop_switch {
+    top: 30%;
+}
+
+.default_address {
+    padding: 1px 3px 1px 3px;
+}
+
+.del_list {
+    float: right;
+    width: 20px;
+    padding: 10px;
+}
+
+.default_span {
+    position: relative;
+    top: -5px;
+}
+.aui-icon-trash{
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+}
+
+#main{
+    padding-bottom: 60px!important;
+}

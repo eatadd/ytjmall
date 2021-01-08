@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>订单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/order/index.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="padded_l_10 padded_r_10 padded_b_10">
+            <!-- 我的订单 -->
+            <div class="raising_order" v-if="FrameIndex == 0">
+                <div class="padded_l_10 padded_r_10 padded_t_10 bg_f radius_4 fs_14 padded_b_5 margin_t_10" v-for="(i,index) in list" :key="index">
+                    <div class="list_tit">
+                        <span class="color_999 dis_block text_1 width_60">{{i.order_no}}</span>
+                        <span class="float_r color_666 m_price">{{i.full_name}}</span>
+                    </div>
+                    <div class="list_img padded_t_5 padded_b_5" v-for="(i_,index) in i.detail" :key="index">
+                        <div class="list_img_l float_l">
+                            <img :src='utils.base_image + i_.image_name' alt="">
+                        </div>
+                        <div class="float_l list_info relative">
+                            <p class="color_333 fs_14 aui-ellipsis-1">{{i_.p_title}}</p>
+                            <p class="color_999 text_1">{{i_.price}}<span class="padded_l_5 padded_r_5">X</span>{{i_.number}}</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="padded_t_5">
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">订单合计</span>
+                            <span class="m_price fs_14 float_r">￥{{i.amount}}</span>
+                        </p>
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">下单地址</span>
+                            <span class="fs_14 float_r aui-ellipsis-1">{{i.address}}</span>
+                        </p>
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">下单时间</span>
+                            <span class="color_999 fs_14 float_r">{{i.create_date}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- 消费者订单  -->
+            <div class="user_order" v-else>
+                <div class="padded_l_10 padded_r_10 padded_t_10 bg_f radius_4 fs_14 padded_b_5 margin_t_10" v-for="(i,index) in list" :key="index" @click="open_details(i.id)">
+                    <div class="list_tit">
+                        <span class="color_999 dis_block text_1 width_60">{{i.order_no}}</span>
+                        <span class="float_r color_666 m_price">{{i.status}}</span>
+                    </div>
+                    <div class="padded_t_5">
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">订单金额</span>
+                            <span class="color_999 fs_14 float_r m_price">￥{{i.amount}}</span>
+                        </p>
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">下单用户</span>
+                            <span class="fs_14 float_r">{{i.full_name}}</span>
+                        </p>
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">手机号码</span>
+                            <span class="fs_14 float_r">{{i.mobile}}</span>
+                        </p>
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">详细地址</span>
+                            <span class="fs_14 float_r">{{i.address}}</span>
+                        </p>
+                        <p class="list_specs">
+                            <span class="color_999 fs_14">下单时间</span>
+                            <span class="fs_14 float_r">{{i.create_date}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="no_list" v-if="list.length == 0">
+                <img src="../../res/images/no_data.png" alt="">
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        var UILoading = api.require('UILoading');
+        new Vue({
+            el: '#app',
+            data: {
+                FrameIndex: api.pageParam.FrameIndex, //全部订单...
+                FrameIndex_1: api.pageParam.FrameIndex_1, //我的订单...
+                start: 0, //数量
+                list: []
+            },
+            mounted: function() {
+                this.ajax();
+                this.up_loading();
+                this.down_loading();
+            },
+            methods: {
+                ajax: function() {
+                    this_ = this;
+                    if (this.FrameIndex == 0) {
+                        if (this.FrameIndex_1 == 0) {
+                            //全部订单
+                            utils.request({
+                                url: utils.base_domain + '/api/user/Order',
+                                name: '自提订单列表',
+                                query: {
+                                    start: this_.start
+                                },
+                                success: function(ret) {
+                                    if (ret.code == 1) {
+                                        this_.start += 10;
+                                        // this_.list += ret.data.order;
+                                        this_.list.push.apply(this_.list, ret.data.order);
+                                    } else {
+                                        api.toast({
+                                            msg: ret.message,
+                                            duration: 2000,
+                                            location: 'bottom'
+                                        });
+                                    }
+                                },
+                                error: function(err) {
+                                    console.log('err' + JSON.stringify(err));
+                                }
+                            });
+                        } else {
+                            utils.request({
+                                url: utils.base_domain + '/api/user/Order',
+                                name: '自提订单列表',
+                                query: {
+                                    status: this_.FrameIndex_1,
+                                    start: this_.start
+                                },
+                                success: function(ret) {
+                                    if (ret.code == 1) {
+                                        this_.start += 10;
+                                        // this_.list = ret.data.order;
+                                        this_.list.push.apply(this_.list, ret.data.order);
+                                    } else {
+                                        api.toast({
+                                            msg: ret.message,
+                                            duration: 2000,
+                                            location: 'bottom'
+                                        });
+                                    }
+                                },
+                                error: function(err) {
+                                    console.log('err' + JSON.stringify(err));
+                                }
+                            });
+                        }
+                    } else {
+                        // 消费者订单
+                        if (this.FrameIndex_1 == 11) {
+                            //全部订单
+                            utils.request({
+                                url: utils.base_domain + '/api/user/UserOrder',
+                                name: '消费者订单',
+                                query: {
+                                    start: this_.start
+                                },
+                                success: function(ret) {
+                                    if (ret.code == 1) {
+                                        this_.start += 10;
+                                        this_.list.push.apply(this_.list, ret.data.order);
+                                        for (i in this_.list) {
+                                            if (this_.list[i].status == 0) {
+                                                this_.list[i].status = '待付款';
+                                            } else if (this_.list[i].status == 1) {
+                                                this_.list[i].status = '待发货';
+                                            } else if (this_.list[i].status == 2) {
+                                                this_.list[i].status = '待收货';
+                                            } else if (this_.list[i].status == 3) {
+                                                this_.list[i].status = '已完成';
+                                            }
+                                        }
+                                    } else {
+                                        api.toast({
+                                            msg: ret.message,
+                                            duration: 2000,
+                                            location: 'bottom'
+                                        });
+                                    }
+                                },
+                                error: function(err) {
+                                    console.log('err' + JSON.stringify(err));
+                                }
+                            });
+                        } else {
+                            utils.request({
+                                url: utils.base_domain + '/api/user/UserOrder',
+                                name: '消费者订单',
+                                query: {
+                                    status: this_.FrameIndex_1,
+                                    start: this_.start
+                                },
+                                success: function(ret) {
+                                    if (ret.code == 1) {
+                                        this_.start += 10;
+                                        // this_.list = ret.data.order;
+                                        this_.list.push.apply(this_.list, ret.data.order);
+                                    } else {
+                                        api.toast({
+                                            msg: ret.message,
+                                            duration: 2000,
+                                            location: 'bottom'
+                                        });
+                                    }
+                                },
+                                error: function(err) {
+                                    console.log('err' + JSON.stringify(err));
+                                }
+                            });
+                        }
+                    }
+                },
+                open_details: function(id) {
+                    api.openWin({
+                        name: 'order_details',
+                        url: './order_details.html',
+                        pageParam: {
+                            id: id
+                        }
+                    });
+                },
+                up_loading: function() {
+                    this_ = this;
+                    this_.start = 0;
+                    api.setRefreshHeaderInfo({
+                        visible: true,
+                        loadingImg: '../image/timg.gif',
+                        bgColor: '#ccc',
+                        textColor: '#fff',
+                        textDown: '下拉刷新...',
+                        textUp: '松开刷新...',
+                        showTime: true
+                    }, function(ret, err) {
+                        this_.ajax();
+                        setTimeout('api.refreshHeaderLoadDone()', '500');
+                    });
+                },
+                down_loading: function() {
+                    api.addEventListener({　　
+                        name: 'scrolltobottom',
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function(ret, err) {　　　　
+                        UILoading.flower({
+                            center: {
+                                x: api.winWidth / 2.0,
+                                y: api.winHeight / 2.0
+                            },
+                            size: 30,
+                            fixed: true
+                        }, function(ret) {
+                            // alert(JSON.stringify(ret.id));
+                            this_.ajax();
+                            setTimeout(function() {
+                                var uiloading = api.require('UILoading');
+                                uiloading.closeFlower({
+                                    id: ret.id
+                                });
+                            }, 500)
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

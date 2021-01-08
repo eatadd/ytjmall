@@ -1,0 +1,96 @@
+.user_out {}
+
+.user_title {
+    width: 60px;
+    position: relative;
+    top: 1px;
+}
+
+.user_input {
+    width: calc(100% - 70px);
+    padding-left: 10px;
+}
+
+.user_input input {
+    width: 95%;
+    outline: none;
+    border: none;
+    font-size: 14px;
+    margin-top: -13px;
+    height: 20px;
+    margin-top: -1.5px;
+}
+
+input::-webkit-input-placeholder {
+    color: #999999;
+}
+
+.user_title span {}
+
+.price_info {
+    margin-top: 130px;
+    line-height: 20px;
+}
+
+.ajax_post {
+    padding: 5px 10px;
+}
+
+.pop_info {
+    line-height: 3em;
+}
+
+.pop {
+    width: 80%;
+    left: 10%;
+}
+
+input {
+    outline: none;
+    border: none;
+}
+
+.pop_info span {
+    width: 50px;
+    display: inline-block;
+}
+
+.user_code_list {
+    height: 18px;
+    overflow: hidden;
+    position: absolute;
+    left: 60px;
+    top: 1px;
+}
+
+.user_code_list img {
+    width: 20px;
+    position: relative;
+    top: 5px;
+}
+
+.user_code_list p {
+    position: relative;
+    top: -3px;
+}
+
+.user_code_list_act {
+    height: auto !important;
+}
+
+.select {
+    line-height: 10px;
+    border: none;
+    background: transparent;
+    outline: none;
+    height: 40px;
+}
+
+.select option {
+    border: 0;
+    outline: 0;
+}
+
+.add_code span {
+    margin-top: 3px;
+}

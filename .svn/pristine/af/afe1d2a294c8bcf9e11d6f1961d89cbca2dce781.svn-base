@@ -1,0 +1,99 @@
+.tab_btn {
+    width: 33.3%;
+}
+
+.tab_btn img {
+    margin: 0 auto;
+    width: 50px;
+}
+
+.today_sale {
+    background: url("../../images/index/yun_2.png") no-repeat;
+    background-size: 100% 100%;
+    padding: 17px 10px;
+}
+
+.today_sale p:nth-child(1) {
+    font-size: 14px;
+    position: relative;
+    top: -5px;
+}
+
+.today_sale p:nth-child(2) {
+    position: relative;
+    top: 5px;
+    font-size: 20px;
+}
+
+.today_sale_ {
+    background: url("../../images/index/yun_1.png") no-repeat;
+    background-size: 100% 100%;
+    padding: 17px 10px;
+}
+
+.today_sale_ p:nth-child(1) {
+    font-size: 14px;
+    position: relative;
+    top: -5px;
+}
+
+.today_sale_ p:nth-child(2) {
+    position: relative;
+    top: 5px;
+    font-size: 20px;
+}
+
+.yun_right {
+    position: absolute;
+    right: 0;
+    top: 30%;
+    background: #FFF;
+    padding: 5px 15px 5px 5px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.today_sale_ p:nth-child(2) {
+    position: relative;
+    top: 5px;
+    font-size: 20px;
+}
+
+.drawing p {
+    font-weight: 500;
+}
+
+.drawing img {
+    margin: 0 auto;
+    width: 50px;
+}
+
+body, html {
+    background: #f0f0f0;
+}
+
+.news_head {
+    font-size: 18px;
+    color: rgba(51, 51, 51, 0.8);
+    padding-bottom: 10px !important;
+}
+
+.news_content {
+    white-space: nowrap;
+    overflow-y: auto;
+}
+
+.news_content::-webkit-scrollbar {
+    display: none;
+}
+
+.news_lists {
+    background: #fff;
+    display: inline-block;
+    width: 200px;
+}
+
+.news_lists img {
+    width: 100%;
+    height: auto;
+}

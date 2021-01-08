@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/login/login.css">
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left color_000"></span>
+            </div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_10">
+                <div class="logo_con">
+                    <img src="../../res/images/user/ytj_logo.jpg" alt="">
+                </div>
+                <div class="padded_l_10 padded_r_10 bg_f radius_4">
+                    <div class="aui-content aui-margin-b-15">
+                        <ul class="aui-list aui-form-list">
+                            <li class="aui-list-item">
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-mobile"></i>
+                                    </div>
+                                    <div class="aui-list-item-input">
+                                        <input type="number" placeholder="手机号码" v-model="mobile">
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="aui-list-item">
+                                <div class="aui-list-item-inner">
+                                    <div class="aui-list-item-label-icon">
+                                        <i class="aui-iconfont aui-icon-lock"></i>
+                                    </div>
+                                    <div class="aui-list-item-input">
+                                        <input type="number" placeholder="手机验证码" v-model="code">
+                                    </div>
+                                    <div class="aui-list-item-label-icon">
+                                        <span class="fff m_back radius_4 fs_14 send_code__" @click="SmsLogin">{{send_code}}</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="padded_10 footer_pay_btn">
+                    <div class="padded_10">
+                        <div class="pay_btn fff fs_16 padded_t_10 padded_b_10 center radius_4 m_back" @click="login">
+                            登录
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="padded_10 m_back" @click="login_wx">微信登录</div> -->
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                mobile: "",
+                code: "",
+                send_code: "发送",
+                auth_code: ''
+            },
+            mounted: function() {
+
+            },
+            methods: {
+                SmsLogin: function() {
+                    this_ = this;
+                    if (!(/^1[3456789]\d{9}$/.test(this.mobile))) {
+                        api.toast({
+                            msg: '手机号码有误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    if (this.send_code != '发送') {
+                        api.toast({
+                            msg: '请勿重复点击',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    var time = 60;
+                    setTimeout(function () {
+                        time--;
+                    },1000)
+                    utils.request_({
+                        url: utils.base_domain + '/api/index/SmsLogin',
+                        name: '发送登陆短信验证码',
+                        query: {
+                            mobile: this_.mobile,
+                        },
+                        success: function(ret) {
+                            // console.log('ret' + JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                var times = setInterval(function() {
+                                    time--;
+                                    this_.send_code = time;
+                                    if (time == 0) {
+                                        this_.send_code = "发送";
+                                        clearInterval(times);
+                                    }
+                                }, 1000)
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                login: function() {
+                    this_ = this;
+                    if (!(/^1[3456789]\d{9}$/.test(this.mobile))) {
+                        api.toast({
+                            msg: '手机号码有误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    if (this.code == '') {
+                        api.toast({
+                            msg: '请输入验证码',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    utils.request_({
+                        url: utils.base_domain + '/api/index/LoginCheck',
+                        name: '登陆接口',
+                        query: {
+                            mobile: this_.mobile,
+                            code: this_.code
+                        },
+                        success: function(ret) {
+                            console.log(JSON.stringify(ret))
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                $api.setStorage('token', ret.data.token);
+                                $api.setStorage('auth', ret.data.auth);
+                                $api.setStorage('username', ret.data.username);
+                                $api.setStorage('image_name', ret.data.image_name);
+                                api.closeToWin({
+                                    name: 'root'
+                                });
+                                api.sendEvent({
+                                    name: 'login_return',
+                                    extra: {
+                                        text: 1
+                                    }
+                                });
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log(err);
+                        }
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

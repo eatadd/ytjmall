@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>支付</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/selectgift.css">
+</head>
+<style>
+    .pay_logo {
+        width: 30px;
+        float: left;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn">
+                <span class="aui-iconfont aui-icon-left" onclick="utils.closeWin()" v-show="gift != 1"></span>
+            </div>
+            <div class="aui-title">支付</div>
+        </header>
+        <div id="main" class="main_padded_t main_padded_b">
+            <div class="padded_10">
+                <div class="padded_l_10 padded_r_10 padded_t_5 padded_b_5 bg_f radius_4">
+                    礼包价格:
+                    <i class="m_price">￥{{user_id}}</i>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_l_10 padded_r_10 padded_t_5 padded_b_5 bg_f radius_4">
+                    <!-- <div class="aui-list-item-inner margin_t_5 margin_b_5 padded_b_5 padded_t_5">
+                        <label class="width_100">
+                            <img class="pay_logo" src="../../res/images/pay/wechat.png" alt="">
+                            <span class="padded_l_10 margin_t_5">微信支付</span>
+                            <input class="aui-radio float_r margin_t_5" type="radio" name="radio" checked="">
+                        </label>
+                    </div> -->
+                    <div class="aui-list-item-inner margin_t_5 margin_b_5 padded_b_5 padded_t_5">
+                        <label class="width_100">
+                            <img class="pay_logo" src="../../res/images/pay/ali.png" alt="">
+                            <span class="padded_l_10 margin_t_5">支付宝支付</span>
+                            <input class="aui-radio float_r margin_t_5" type="radio" name="radio" checked>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="padded_10 footer_pay_btn">
+                <div class="padded_10">
+                    <div class="pay_btn fff fs_16 center radius_4 m_back" @click='init'>
+                        支付
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                user_id: api.pageParam.user_id == 1 ? 1000 : 200,
+                gift_id: api.pageParam.gift_id || '',
+                choose_pay: 0,
+                gift: 0,
+                gift_order: {}
+            },
+            mounted: function() {
+
+            },
+            methods: {
+                init: function() {
+                    this_ = this;
+                    if (api.pageParam.id) {
+                        this_.gift = 1;
+                    }
+                    utils.request({
+                        url: utils.base_domain + '/api/index/GiftAlipay',
+                        name: '礼包支付支付宝接口',
+                        query: {
+                            id: this_.gift_id
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                // console.log(JSON.stringify(ret));
+                                var aliPayPlus = api.require('aliPayPlus');
+                                aliPayPlus.payOrder({
+                                    orderInfo: ret.data
+                                }, function(data, err) {
+                                    console.log(JSON.stringify(data));
+                                    switch (data.code) {
+                                        case '9000':
+                                            utils.request({
+                                                url: utils.base_domain + '/api/user/Info',
+                                                name: '获取用户基本信息',
+                                                query: {
+
+                                                },
+                                                success: function(ret) {
+                                                    // console.log(JSON.stringify(ret));
+                                                    if (ret.code == 1) {
+                                                        api.closeToWin({
+                                                            name: 'root'
+                                                        });
+                                                        api.sendEvent({
+                                                            name: 'login_return',
+                                                            extra: {
+                                                                text: 1
+                                                            }
+                                                        });
+                                                    } else if (ret.code == -2) {
+                                                        api.openWin({
+                                                            name: 'authentication',
+                                                            url: './authentication.html',
+                                                            pageParam: {
+
+                                                            }
+                                                        });
+                                                    } else {
+                                                        api.closeToWin({
+                                                            name: 'root'
+                                                        });
+                                                        api.sendEvent({
+                                                            name: 'login_return',
+                                                            extra: {
+                                                                text: 1
+                                                            }
+                                                        });
+                                                    }
+                                                },
+                                                error: function(err) {
+                                                    console.log('err' + JSON.stringify(err));
+                                                }
+                                            });
+                                            break;
+                                        case '4000':
+                                            api.toast({
+                                                msg: '订单支付失败',
+                                                duration: 2000,
+                                                location: 'bottom'
+                                            });
+                                            api.openWin({
+                                                name: 'error',
+                                                url: '../login/error.html',
+                                                pageParam: {}
+                                            });
+                                            break;
+                                        case '6001':
+                                            api.toast({
+                                                msg: '取消支付',
+                                                duration: 2000,
+                                                location: 'bottom'
+                                            });
+                                            break;
+                                        case '6002':
+                                            api.toast({
+                                                msg: '网络连接出错',
+                                                duration: 2000,
+                                                location: 'bottom'
+                                            });
+                                            break;
+                                        default:
+
+                                    }
+                                });
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

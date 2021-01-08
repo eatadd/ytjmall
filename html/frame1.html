@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>商学院</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" href="../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../res/css/main.css">
+</head>
+<body>
+    <div id="wrap" class="flex-wrap flex-vertical">
+        <header class="center">
+            <span style="visibility:hidden;">loading</span>
+        </header>
+        <div id="main" class="flex-con"></div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../res/vue/vue.js"></script>
+<script type="text/javascript" src="../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        var obj = api.require('UIWebBrowser');
+        obj.open({
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.winWidth,
+                h: $api.dom('#main').offsetHeight + 20
+            },
+            path: 'http://app.ytjmall.com/cms/index',
+            fixedOn: 'frame1',
+            fixed: true,
+        }, function(ret) {
+            // console.log(JSON.stringify(ret));
+        });
+    }
+</script>
+
+</html>

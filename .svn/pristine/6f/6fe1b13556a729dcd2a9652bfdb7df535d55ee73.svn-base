@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我要自提</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/index/packupgood.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header" style="z-index: 44">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">我要自提</div>
+        </header>
+        <div id="main" class="main_padded_t margin_t_10">
+            <div class="padded_r_10 padded_l_10 margin_t_10" v-for="(i,index) in inputArr" :key="index">
+                <div class="padded_r_10 padded_l_10 padded_t_10 padded_b_5 bg_f radius_4">
+                    <div class="checked_con float_l">
+                        <input class="aui-checkbox" type="checkbox" name="radio" v-model="i.checked"
+                            @click="checkOne(index)">
+                    </div>
+                    <div class="check_text float_l">
+                        <div class="check_text_img float_l">
+                            <img class="radius_4" :src="i.image_name" alt="">
+                        </div>
+                        <div class="check_text_info float_l relative">
+                            <p class="color_333 fs_16 text_1">{{i.title}}</p>
+                            <p class="color_999 fs_14 text_1">{{i.specs}}</p>
+                            <p class="fs_16 m_price">￥{{i.price}}</p>
+                            <div class="aui-list-item-right">
+                                <div class="aui-bar aui-bar-btn aui-bar-btn-sm" style="width:60%;float:right">
+                                    <div class="aui-bar-btn-item" @click="minute_btn(index)">
+                                        <i class="aui-iconfont aui-icon-minus"></i>
+                                    </div>
+                                    <div class="aui-bar-btn-item">
+                                        <input type="number" class="aui-input aui-text-center" :value="i.count">
+                                    </div>
+                                    <div class="aui-bar-btn-item" @click="add_btn(index)">
+                                        <i class="aui-iconfont aui-icon-plus"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <footer class="aui-bar aui-bar-tab">
+            <div class="aui-bar-tab-item" tapmode style="width: 1rem;">
+                <input class="aui-checkbox" type="checkbox" name="checkboxAll" @click="Allselect" v-model="Allchecked">
+            </div>
+            <div class="aui-bar-tab-item fs_16 width_8" tapmode style="width: 5rem;">
+                <p class="fs_16 m_price center_l">￥{{all_price_}}</p>
+            </div>
+            <div class="aui-bar-tab-item aui-text-white" tapmode style="width: 2rem;" @click="settlement">
+                <div class="m_back fs_14 padded_t_5 padded_b_5 radius_4 aui-margin-r-10">去结算</div>
+            </div>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function () {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                inputArr: [],
+                all_price_: 0, //总价
+                Allchecked: false, //全选
+            },
+            mounted: function () {
+                this.ajax();
+            },
+            methods: {
+                ajax: function () {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/prudoct/Search',
+                        name: '自提产品列表',
+                        query: {
+                            tyle: [1, 2],
+                        },
+                        success: function (ret) {
+                            if (ret.code == 1) {
+                                for (i in ret.data) {
+                                    ret.data[i].count = 1;
+                                }
+                                this_.inputArr = ret.data;
+                                for (let i = 0; i < ret.data.length; i++) {
+                                    ret.data[i].image_name = utils.base_image + ret.data[i].image_name;
+                                }
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function (err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                //去结算
+                settlement: function () {
+                    if (this.all_price_ == 0) {
+                        api.toast({
+                            msg: '请选择商品',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    var check_arrer = [];
+                    for (var i = 0; i < this.inputArr.length; i++) {
+                        if (this.inputArr[i].checked == true) {
+                            check_arrer.push(this.inputArr[i]);
+                        }
+                    }
+                    api.openWin({
+                        name: 'showorder',
+                        url: './showorder.html',
+                        pageParam: {
+                            price: this.all_price_,
+                            inputArr: check_arrer
+                        }
+                    });
+                },
+                //增加
+                add_btn: function (index) {
+                    if (this.inputArr[index].checked == true) {
+                        this.inputArr[index].count++;
+                        this.all_price_ = parseFloat(this.all_price_) + parseFloat(this.inputArr[index].price);
+                        this.all_price_ = this.keepTwoDecimal(this.all_price_);
+                    } else {
+                        api.toast({
+                            msg: '请勾选商品',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                    }
+                },
+                // 减少
+                minute_btn: function (index) {
+                    if (this.inputArr[index].checked == true) {
+                        if (this.inputArr[index].count != 1) {
+                            this.inputArr[index].count--;
+                            this.all_price_ = parseFloat(this.all_price_) - parseFloat(this.inputArr[index].price);
+                            this.all_price_ = this.keepTwoDecimal(this.all_price_);
+                        } else {
+                            api.toast({
+                                msg: '商品不能低于一件',
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        }
+                    } else {
+                        api.toast({
+                            msg: '请勾选商品',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                    }
+                },
+                // 总价
+                all_price: function () {
+                    for (i = 0; i < this.inputArr.length; i++) {
+                        this.all_price_ += this.inputArr[i].price * this.inputArr[i].count
+                    }
+                },
+                // 单选
+                checkOne: function (index) {
+                    if (this.inputArr[index].checked == true) {
+                        this.all_price_ = this.all_price_ - this.inputArr[index].price * this.inputArr[index].count;
+                        this.all_price_ = this.keepTwoDecimal(this.all_price_);
+                    } else {
+                        this.all_price_ = this.all_price_ + this.inputArr[index].price * this.inputArr[index].count;
+                        this.all_price_ = this.keepTwoDecimal(this.all_price_);
+                    }
+                    var count = 0;
+                    for (var j = 0; j < this.inputArr.length; j++) {
+                        if (this.inputArr[j].checked == true) {
+                            count++;
+                        }
+                        if (count == this.inputArr.length) {
+                            this.Allchecked = true;
+                        } else {
+                            this.Allchecked = false;
+                        }
+                    }
+                },
+                //全选
+                Allselect: function () {
+                    for (i = 0; i < this.inputArr.length; i++) {
+                        if (this.Allchecked == false) {
+                            this.inputArr[i].checked = true;
+                            this.all_price_ += this.inputArr[i].price * this.inputArr[i].count
+                        } else {
+                            this.inputArr[i].checked = false;
+                            this.all_price_ = 0;
+                        }
+                    }
+                },
+                keepTwoDecimal: function (num) {
+                    var result = parseFloat(num);
+                    if (isNaN(result)) {
+                        alert('传递参数错误，请检查！');
+                        return false;
+                    }
+                    result = Math.round(num * 100) / 100;
+                    return result;
+                }
+            }
+        })
+    }
+</script>
+
+</html>

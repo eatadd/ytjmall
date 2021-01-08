@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>支付失败</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/selectgift.css">
+</head>
+<style>
+    img {
+        width: 150px;
+        margin: 0 auto;
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">支付失败</div>
+        </header>
+        <div id="main" class="main_padded_t margin_t_10 main_padded_b">
+            <div class="padded_10">
+                <div class="center padded_10 bg_f radius_4">
+                    <div class="padded_b_10">
+                        <img src="../../res/images/error.png" alt="">
+                    </div>
+                    <div>
+                        <div class="width_100">
+                            <div class="aui-btn aui-btn-block aui-btn-sm bg_f m_back fff" onclick="utils.closeWin()">重新支付</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+
+            },
+            mounted: function() {
+
+            },
+            methods: {
+
+            }
+        })
+    }
+</script>
+
+</html>

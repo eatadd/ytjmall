@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+<style>
+    .add_card {
+        padding: 3px 8px;
+        position: relative;
+        left: -15px;
+        background: #648fff;
+    }
+
+    .del_card {
+        background: #ccc;
+        padding: 3px 8px;
+    }
+
+    .list {
+        background: url("../../res/images/index/yun_1.png");
+        background-size: 100% 100%;
+    }
+
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    #main {
+        padding-bottom: 60px!important;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">银行卡</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="list_con margin_t_5">
+                <div class="padded_b_5 padded_t_5 padded_l_10 padded_r_10">
+                    <!-- 从此循环 -->
+                    <div class="list radius_4 padded_l_10 padded_r_10 padded_t_10 padded_b_5 margin_b_10" v-for="(i,index) in list" :key="index">
+                        <div class="lists" @click="choose_id(i.id,i.bank,i.id_card)">
+                            <p class="text_1 fs_14 color_999">
+                                <span class="fff">姓名:</span>
+                                <span class="float_r fff">{{i.full_name}}</span>
+                            </p>
+                            <p class="text_1 fs_14 color_999">
+                                <span class="fff">银行:</span>
+                                <span class="float_r fff">{{i.bank}}</span>
+                            </p>
+                            <p class="text_1 fs_14 color_999">
+                                <span class="fff">卡号:</span>
+                                <span class="float_r fff">{{i.id_card}}</span>
+                            </p>
+                            <p class="text_1 fs_12 color_999">
+                                <span class="float_r del_card fff radius_4 del_list" @click="del_card(i.id,index)">删除</span>
+                                <span class="clear"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="no_list" v-if="list.length == 0">
+                        <img src="../../res/images/no_data.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="padded_10 footer">
+                <div class="radius_4 fff center m_back padded_t_10 padded_b_10" onclick="utils.openWin('add_back','./add_back.html')">添加银行卡</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        var UILoading = api.require('UILoading');
+        new Vue({
+            el: '#app',
+            data: {
+                start: 0,
+                list: []
+            },
+            mounted: function() {
+                this.ajax();
+                // this.up_loading();
+                // this.down_loading();
+                this.addEventr();
+            },
+            methods: {
+                choose_id: function(id, bank, id_card) {
+                    api.sendEvent({
+                        name: 'choose',
+                        extra: {
+                            text: 1,
+                            id: id,
+                            bank: bank,
+                            id_card: id_card
+                        }
+                    });
+                    api.closeWin();
+                },
+                del_card: function(id, index) {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/BankDelete',
+                        name: '银行卡删除',
+                        query: {
+                            id: id
+                        },
+                        success: function(ret) {
+                            console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                this_.list.splice(index, 1)
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                    event.stopPropagation();
+                },
+                addEventr: function() {
+                    this_ = this;
+                    api.addEventListener({
+                        name: 'card'
+                    }, function(ret, err) {
+                        if (ret.value.text == 1) {
+                            this_.ajax();
+                        }
+                    });
+                },
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Bank',
+                        name: '银行卡列表',
+                        query: {
+                            // start: this_.start
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.list = ret.data.bank;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                up_loading: function() {
+                    this_ = this;
+                    api.setRefreshHeaderInfo({
+                        visible: true,
+                        loadingImg: '../image/timg.gif',
+                        bgColor: '#ccc',
+                        textColor: '#fff',
+                        textDown: '下拉刷新...',
+                        textUp: '松开刷新...',
+                        showTime: true
+                    }, function(ret, err) {
+                        this_.ajax();
+                        setTimeout('api.refreshHeaderLoadDone()', '500');
+                    });
+                },
+                down_loading: function() {
+                    this_ = this;
+                    api.addEventListener({　　
+                        name: 'scrolltobottom',
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function(ret, err) {　　　　
+                        UILoading.flower({
+                            center: {
+                                x: api.winWidth / 2.0,
+                                y: api.winHeight / 2.0
+                            },
+                            size: 30,
+                            fixed: true
+                        }, function(ret) {
+                            // alert(JSON.stringify(ret.id));
+                            this_.ajax();
+                            setTimeout(function() {
+                                var uiloading = api.require('UILoading');
+                                uiloading.closeFlower({
+                                    id: ret.id
+                                });
+                            }, 500)
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

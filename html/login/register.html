@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/login/login.css">
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app">
+        <header class="aui-bar aui-bar-nav header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left color_000"></span>
+            </div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <form>
+                <div class="segment">
+                    <h1>注册</h1>
+                </div>
+                <input type="text" placeholder="手机号码" />
+                <input type="password" placeholder="密码" />
+                <div class="segment segment_">
+                    <input type="password" class="float_l" placeholder="验证码" />
+                    <button class="unit float_l width_20" type="button">发送</button>
+                </div>
+                <div class="segment">
+                    <input class="aui-radio" type="checkbox" name="checkbox_">
+                    <span onclick="utils.openWin('declare','../my/declare.html')">用户协议</span>
+                </div>
+                <button class="unit unit_" type="button">注册</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+
+            },
+            mounted: function() {
+
+            },
+            methods: {
+
+            }
+        })
+    }
+</script>
+
+</html>

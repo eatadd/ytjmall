@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的业绩</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/achievement.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">我的业绩</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_l_10 padded_r_10 padded_t_10">
+                <div class="fff center padded_10 radius_4 today_sale" style="background: url('../../res/images/index/yun_2.png') no-repeat;">
+                    <p class="fs_16 fff">我的业绩</p>
+                    <p class="text_1 fw_600 fff">￥{{all_price}}</p>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10">
+                <div class="padded_l_10 padded_r_10 padded_t_10 padded_b_5 bg_f center radius_4">
+                    <div class="width_50 float_l price_info" v-for="(i,index) in list_top" :key="index" @click="list_btn(index)">
+                        <p class="text_1 fs_14 color_333">{{i.title}}</p>
+                        <p class="text_1 m_price">￥{{i.price}}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                list_top: [{
+                    title: '进货总计',
+                    price: 0
+                }, {
+                    title: '礼包销售',
+                    price: 0
+                }],
+                act: 0,
+                count: 0,
+                all_price: 0
+            },
+            mounted: function() {
+                this.ajax();
+                this.openFrameGroup();
+            },
+            methods: {
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Achievement',
+                        name: '我的业绩',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.count = ret.data.count;
+                                this_.all_price = parseFloat(ret.data.stockAmount) + parseFloat(ret.data.giftAmount);
+                                this_.list_top[0].price = ret.data.stockAmount;
+                                this_.list_top[1].price = ret.data.giftAmount;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                list_btn: function(index) {
+                    this.act = index;
+                    api.setFrameGroupIndex({
+                        name: 'achievement_lists',
+                        index: index
+                    });
+                },
+                openFrameGroup: function() {
+                    this_ = this;
+                    api.openFrameGroup({
+                        name: 'achievement_lists',
+                        rect: {
+                            x: 0,
+                            y: $api.dom('#main').offsetHeight + 10,
+                            w: 'auto',
+                            h: 'auto'
+                        },
+                        scrollEnabled: false,
+                        frames: [{
+                            name: 'achievement_frames',
+                            url: './achievement_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                title: '进货总计',
+                                type: 1
+                            }
+                        }, {
+                            name: 'achievement_frames',
+                            url: './achievement_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                title: '礼包销售',
+                                type: 2
+                            }
+                        }]
+                    }, function(ret, err) {
+                        this_.act = ret.index;
+                        api.setFrameGroupIndex({
+                            name: 'achievement_lists',
+                            index: ret.index
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

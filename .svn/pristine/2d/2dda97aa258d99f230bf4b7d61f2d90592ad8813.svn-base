@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>设置</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">设置</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_10">
+                <div class="padded_r_10 padded_l_10 bg_f radius_4">
+                    <p class="fs_16 margin_t_5 padded_t_10" onclick="utils.openWin('authentication','../index/authentication.html')">
+                        <i>
+                            <i class="aui-iconfont aui-icon-lock"></i><span class="fs_14 padded_l_5">前往认证</span>
+                        </i>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </p>
+                    <p class="fs_16 margin_t_5 margin_b_5 padded_t_10" @click="getCacheSize">
+                        <i>
+                            <i class="aui-iconfont aui-icon-trash"></i><span class="fs_14 padded_l_5">清除缓存</span>
+                        </i>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </p>
+                    <p class="fs_16 margin_t_5 margin_b_5 padded_t_10 padded_b_10" onclick="utils.openWin('about_us','./about_us.html')">
+                        <i>
+                            <i class="aui-iconfont aui-icon-info"></i><span class="fs_14 padded_l_5">关于我们</span>
+                        </i>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </p>
+                </div>
+            </div>
+            <!-- /登录退出 -->
+            <div class="padded_10 footer">
+                <div class="price_out_btn center radius_4 fff m_back padded_t_10 padded_b_10" v-if="type == 0" @click="login">
+                    登录
+                </div>
+                <div class="price_out_btn center radius_4 fff m_back padded_t_10 padded_b_10" v-else="type == 1" @click="sign_out">
+                    退出
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        var UILoading = api.require('UILoading');
+        new Vue({
+            el: '#app',
+            data: {
+                type: $api.getStorage('token') == undefined ? 0 : 1
+            },
+            mounted: function() {
+
+            },
+            methods: {
+                sign_out: function() {
+                    $api.clearStorage();
+                    api.closeToWin({
+                        name: 'root'
+                    });
+                    api.sendEvent({
+                        name: 'login_return',
+                        extra: {
+                            text: 1
+                        }
+                    });
+                },
+                login: function() {
+                    api.openWin({
+                        name: 'login',
+                        url: '../login/login.html',
+                        animation: {
+                            subType: 'from_bottom',
+                            duration: 500
+                        },
+                        pageParam: {
+
+                        }
+                    });
+                },
+                getCacheSize: function() {
+                    this_ = this;
+                    UILoading.flower({
+                        center: {
+                            x: api.winWidth / 2.0,
+                            y: api.winHeight / 2.0
+                        },
+                        size: 30,
+                        fixed: true
+                    }, function(ret) {
+                        setTimeout(function() {
+                            var uiloading = api.require('UILoading');
+                            uiloading.closeFlower({
+                                id: ret.id
+                            });
+                            api.toast({
+                                msg: '清除完成',
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        }, 1000)
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

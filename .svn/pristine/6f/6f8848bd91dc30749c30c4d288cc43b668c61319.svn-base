@@ -1,0 +1,43 @@
+.today_sale {
+    background-size: 100% 100%;
+    line-height: 2em;
+    padding-top: 10px;
+}
+
+.today_sale p:nth-child(2) {
+    font-size: 20px;
+}
+
+.price_info {
+    padding-top: 6px;
+}
+
+.price_info:nth-child(1) {
+    border-right: 1px solid #E6E6E6;
+    box-sizing: border-box;
+}
+
+.price_info p:nth-child(2) {
+    font-size: 16px;
+    color: #FF7F0E;
+}
+
+body {
+    padding-bottom: 0!important;
+}
+
+.order_price_img {
+    width: 30px;
+    height: 30px;
+}
+
+.order_price_img img {
+    margin-top: 65%;
+    width: 30px;
+    height: 30px;
+}
+
+.order_info {
+    width: calc(100% - 40px);
+    padding-left: 10px;
+}

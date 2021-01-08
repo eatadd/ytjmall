@@ -1,0 +1,80 @@
+<widget id="A6048970568417" version="0.0.1">
+
+    <name>一桶金</name>
+
+    <description>
+
+        Example For APICloud.
+
+    </description>
+
+    <author email="developer@apicloud.com" href="http://www.apicloud.com">
+
+        Developer
+
+    </author>
+
+    <content src="index.html"/>
+
+    <access origin="*"/>
+
+    <preference name="pageBounce" value="false"/>
+
+    <preference name="appBackground" value="#FFF"/>
+
+    <preference name="windowBackground" value="#FFF"/>
+
+    <preference name="frameBackgroundColor" value="#FFF"/>
+
+    <preference name="hScrollBarEnabled" value="false"/>
+
+    <preference name="vScrollBarEnabled" value="false"/>
+
+    <preference name="autoLaunch" value="true"/>
+
+    <preference name="fullScreen" value="false"/>
+
+    <preference name="autoUpdate" value="true"/>
+
+    <preference name="smartUpdate" value="false"/>
+
+    <preference name="debug" value="true"/>
+
+    <preference name="statusBarAppearance" value="true"/>
+
+    <permission name="readPhoneState"/>
+
+    <permission name="camera"/>
+
+    <permission name="record"/>
+
+    <permission name="location"/>
+
+    <permission name="fileSystem"/>
+
+    <permission name="internet"/>
+
+    <permission name="bootCompleted"/>
+
+    <permission name="hardware"/>
+
+    <feature name="wxPayPlus">
+        <param name="urlScheme" value="wxa80ffa85104b9926"/>
+        <param name="apiKey" value="wxa80ffa85104b9926"/>
+        <param name="apiSecret" value="6a71e69d9b22b09ffdd10e2440834acd"/>
+        <param name="universalLink" value="https://bjtest.apicloud.com"/>
+    </feature>
+
+
+    <feature name="wxPlus">
+      <param name="urlScheme" value="wxa80ffa85104b9926"/>
+      <param name="apiKey" value="wxa80ffa85104b9926"/>
+      <param name="apiSecret" value="6a71e69d9b22b09ffdd10e2440834acd"/>
+      <param name="universalLink" value="https://bjtest.apicloud.com"/>
+    </feature>
+
+
+    <feature name="aliPayPlus">
+     <param name="urlScheme" value="AliPayPlusA6048970568417" />
+ </feature>
+</widget>

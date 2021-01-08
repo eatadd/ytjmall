@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>关于我们</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+<style>
+    .logo_v img {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+    }
+
+    .logo_v {
+        padding: 40px 0;
+    }
+
+    .logo_v p {
+        padding-top: 20px !important;
+    }
+
+    .info {
+        padding-bottom: 10px !important;
+    }
+
+    .info_text {
+        line-height: 1.6em;
+    }
+
+    body {
+        padding: 0 !important;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">关于我们</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_10">
+                <div class="padded_10 radius_4 bg_f logo_v center">
+                    <img src="../../res/images/user/ytj_logo.jpg" alt="">
+                    <p>版本: 1.0</p>
+                </div>
+            </div>
+            <div class="padded_10">
+                <div class="padded_10 bg_f radius_4">
+                    <p class="fs_16 info">公司简介:</p>
+                    <p class="fs_14 999 padded_b_10 info_text">
+                        一桶金云商是由国内知名导演麦田先生领衔创办，聚焦于轻创业平台基础设施建设，为草根创业者提供创业教育、创业项目孵化和实战型创业人才培养的赋能式服务；同时打造一个基于移动互联网的互动体系，建立一个开放协同、分享多赢、深度交互的分享式社群电商生态系统。平台甄选具有独特价值、技术水平领先的美和健康领域的产品，首批入驻的是金诗颜类人胶原蛋白系列产品。由南京理工大学杨树林教授科研团队历时13余年研制完成，曾获国家发明专利2项、 并列入十二五国家高技术研究发展计划（863计划）
+                    </p>
+                    <p class="center padded_t_10 fs_14 color_999"><a class="pop_btn_act" onclick="utils.openWin('declare','./declare.html')">隐私声明</a></p>
+                    <p class="center padded_t_10 fs_14 color_999">
+                        <span>一桶金云商版权所有</span>
+                    </p>
+                    <p class="center padded_t_10 fs_14 ccc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+
+            },
+            mounted: function() {
+
+            },
+            methods: {
+
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>帮助中心</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">帮助中心</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <section class="aui-content-padded">
+                <ul class="aui-list aui-collapse aui-border">
+                    <div class="aui-collapse-item">
+                        <li class="aui-list-item aui-collapse-header" tapmode>
+                            <div class="aui-list-item-inner">
+                                <div class="aui-list-item-title">常见问题</div>
+                                <div class="aui-list-item-right">
+                                    <i class="aui-iconfont aui-icon-down aui-collapse-arrow"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <div class="aui-collapse-content aui-padded-15 aui-border-b">
+                            客服电话:4001002550
+                        </div>
+                    </div>
+                </ul>
+            </section>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script type="text/javascript" src="../../res/aui/script/aui-collapse.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+
+            },
+            mounted: function() {
+
+            },
+            methods: {
+
+            }
+        })
+        var collapse = new auiCollapse({
+            autoHide: false //是否自动隐藏已经展开的容器
+        });
+    }
+</script>
+
+</html>

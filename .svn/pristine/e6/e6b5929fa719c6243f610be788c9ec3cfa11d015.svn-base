@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" href="../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../res/css/main.css">
+    <link rel="stylesheet" href="../res/css/my/index.css">
+    <link rel="stylesheet" type="text/css" href="../res/aui/css/aui-slide.css" />
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="padded_10 radius_4">
+            <section class="aui-content radius_4 user-info aui-text-center aui-margin-b-5">
+                <img :src="image_name" class="avatar aui-img-round">
+                <h2 class="aui-margin-t-15">{{username}} <small><i class="aui-iconfont aui-icon-cert aui-text-danger"></i></small></h2>
+                <div class="aui-row aui-margin-t-15">
+                    <div class="aui-col-xs-6 aui-text-right aui-border-r aui-padded-r-10">
+                        <div class="aui-label aui-label-info" @click="open_gift">{{type}}</div>
+                    </div>
+                    <div class="aui-col-xs-6 aui-text-left aui-padded-l-10">
+                        金豆: <span class="m_price">{{allprice}}</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="padded_r_10 padded_l_10 padded_b_10">
+            <div class="padded_10 bg_f radius_4 aui-row center tab">
+                <div class="aui-col-xs-3" @click="qr_code_()">
+                    <img src="../res/images/user/user_index/user_1.png" alt="">
+                    <p>二维码</p>
+                </div>
+                <div class="aui-col-xs-3 inviteCode">
+                    <input type="text" readonly id="select" @click="inviteCode" value="">
+                    <img src="../res/images/user/user_index/user_2.png" alt="">
+                    <p>邀请码</p>
+                </div>
+                <div class="aui-col-xs-3 inviteCode">
+                    <input type="text" readonly id="select_" @click="inviteCode_" value="">
+                    <img src="../res/images/user/user_index/user_3.png" alt="">
+                    <p>店铺地址</p>
+                </div>
+                <div class="aui-col-xs-3" @click="share">
+                    <img src="../res/images/user/user_index/user_4.png" alt="">
+                    <p>去分享</p>
+                </div>
+            </div>
+        </div>
+        <div class="padded_l_10 padded_r_10 padded_b_10">
+            <div class="padded_r_10 padded_l_10 padded_t_5 bg_f radius_4">
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('gift','./my/gift.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/1.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">礼包销售</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('jindou','./index/jindou.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/2.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">我的金豆</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('packupgood','./index/packupgood.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/3.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">我要自提</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('achievement','./my/achievement.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/4.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">我的业绩</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('stock','./my/stock.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/5.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">我的产品库</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="padded_l_10 padded_r_10 padded_b_10">
+            <div class="padded_r_10 padded_l_10 padded_t_5 bg_f radius_4">
+                <!-- <div class="user_list padded_t_5 padded_b_5">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/6.svg" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">商品管理</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div> -->
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('address','./my/address.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/6.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">地址管理</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('bank','./my/bank.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/7.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">银行卡管理</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('help_center','./my/help_center.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/8.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">帮助中心</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="user_list padded_t_5 padded_b_5" onclick="utils.openWin('set_up','./my/set_up.html')">
+                    <div class="list_img_l float_l">
+                        <img src="../res/images/user/user_index/9.png" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="fs_14 color_666">设置</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../res/vue/vue.js"></script>
+<script type="text/javascript" src="../res/script/utils.js"></script>
+<script type="text/javascript" src="../res/aui/script/aui-slide.js"></script>
+<script>
+    apiready = function() {
+        utils.init();
+        // console.log($api.getStorage('username'));
+        // console.log($api.getStorage('image_name'));
+        new Vue({
+            el: '#app',
+            data: {
+                username: $api.getStorage('username'),
+                image_name: $api.getStorage('image_name'),
+                qr_code: 'http://ytjmall.com',
+                num_inviteCode: "0", //邀请码
+                num_inviteCode_: 0, //店铺地址
+                type: '未开通VIP',
+                allprice: 0
+            },
+            mounted: function() {
+                this.ajax();
+            },
+            methods: {
+                open_gift: function() {
+                    if (this.type != '30VIP') {
+                        api.openWin({
+                            name: 'selectgift',
+                            url: './index/selectgift.html',
+                            pageParam: {
+                                type: 1
+                            }
+                        });
+                    }
+                },
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Info',
+                        name: '获取用户基本信息',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            // console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                $api.setStorage('username', ret.data.user.username);
+                                $api.setStorage('image_name', ret.data.user.image_name);
+                                this_.username = $api.getStorage('username');
+                                this_.image_name = $api.getStorage('image_name');
+                                if (ret.data.user.type == 0) {
+                                    this_.type = '请开通VIP'
+                                } else if (ret.data.user.type == 1) {
+                                    this_.type = '30VIP';
+                                } else if (ret.data.user.type == 2) {
+                                    this_.type = '升级30vip';
+                                }
+                                this_.num_inviteCode = ret.data.inviteCode;
+                                this_.num_inviteCode_ = ret.data.inviteUrl;
+                                this_.qr_code = ret.data.inviteUrl;
+                                this_.allprice = parseFloat(ret.data.user.jindou) + parseFloat(ret.data.user.frozen);
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                setTimeout(function() {
+                                    // api.openWin({
+                                    //     name: 'go_pay',
+                                    //     url: './index/go_pay.html',
+                                    //     pageParam: {
+                                    //         name: 'test'
+                                    //     }
+                                    // });
+                                }, 1000)
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                share: function() {
+                    this_ = this;
+                    var sharedModule = api.require('shareAction');
+                    sharedModule.share({
+                        text: this_.num_inviteCode_,
+                        type: 'text'
+                    });
+                },
+                qr_code_: function() {
+                    api.openWin({
+                        name: 'qr_code',
+                        url: './my/qr_code.html',
+                        pageParam: {
+                            qr_code: this.qr_code
+                        }
+                    });
+                },
+                // 邀请码
+                inviteCode: function() {
+                    document.getElementById('select').value = this.num_inviteCode;
+                    document.getElementById('select').select();
+                    document.execCommand('Copy');
+                    api.toast({
+                        msg: '邀请码 ' + this.num_inviteCode + ' 已复制到粘切板'
+                    });
+                },
+                inviteCode_: function() {
+                    document.getElementById('select_').value = this.num_inviteCode;
+                    document.getElementById('select_').select();
+                    document.execCommand('Copy');
+                    api.toast({
+                        msg: '店铺地址 ' + this.num_inviteCode_ + ' 已复制到粘切板'
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>去自提</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/index/showorder.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">去自提</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <!-- 地址选择 -->
+            <div class="padded_10">
+                <div class="bg_f radius_4">
+                    <div class="aui-content">
+                        <ul class="aui-list aui-media-list" @click="address_btn">
+                            <li class="aui-list-item aui-list-item-middle">
+                                <div class="aui-media-list-item-inner">
+                                    <div class="aui-list-item-media" style="width: 1.3rem;">
+                                        <i class="aui-iconfont aui-icon-location"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner aui-list-item-arrow">
+                                        <div class="aui-list-item-text">
+                                            <div class="aui-list-item-title aui-font-size-14">{{address_list.full_name}} {{address_list.mobile}}</div>
+                                            <div class="aui-list-item-right aui-btn aui-btn-danger address_chose" v-if="address_list.default == 1">默认地址</div>
+                                        </div>
+                                        <div class="aui-list-item-text aui-ellipsis-1o">
+                                            {{address_list.province}}{{address_list.city}}{{address_list.county}}{{address_list.address}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- list -->
+            <div class="list">
+                <div class="padded_r_10 padded_l_10 padded_b_10" v-for="(i,index) in inputArr" :key="index">
+                    <div class="padded_t_10 padded_l_10 padded_r_10 bg_f radius_4">
+                        <div class="img_con float_l padded_t_5">
+                            <img class="radius_4" :src="utils.base_iamge + i.image_name" alt="">
+                        </div>
+                        <div class="list_info float_l padded_l_10">
+                            <p class="fs_16 text_1">{{i.title}}</p>
+                            <p class="text_1 color_999 fs_14">{{i.specs}} * {{i.count}}</p>
+                            <p class="text_1 m_price">￥{{i.price}}</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 运费 -->
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_l_10 padded_r_10 padded_t_5 padded_b_5 bg_f radius_4">
+                    <div class="padded_t_5 padded_b_5">
+                        <span class="fs_14 color_333">运费</span>
+                        <i class="fs_14 color_666 float_r list_text_r">免运费</i>
+                    </div>
+                    <div class="padded_t_5 padded_b_5">
+                        <span class="fs_14 color_333">现金券</span>
+                        <i class="fs_14 color_666 float_r list_text_r">无</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="aui-bar aui-bar-tab">
+            <div class="aui-bar-tab-item padded_l_5 fs_16" tapmode style="width: 1.2rem;">
+                总计:
+            </div>
+            <div class="aui-bar-tab-item fs_16 width_8" tapmode style="width: 5rem;">
+                <p class="fs_16 m_price center_l">￥{{price}}</p>
+            </div>
+            <div class="aui-bar-tab-item aui-text-white" tapmode style="width: 2rem;">
+                <div class="m_back fs_14 padded_t_5 padded_b_5 radius_4 aui-margin-r-10" @click="ajax">确认购买</div>
+            </div>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                price: api.pageParam.price,
+                inputArr: api.pageParam.inputArr,
+                pid: [],
+                number: [],
+                address_list: {},
+                aid: 0
+            },
+            mounted: function() {
+                this.init();
+            },
+            methods: {
+                init: function() {
+                    for (i in this.inputArr) {
+                        this.pid.push(this.inputArr[i].id);
+                        this.number.push(this.inputArr[i].count);
+                    }
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Address',
+                        name: '用户地址',
+                        query: {},
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                for (i in ret.data.address) {
+                                    if (ret.data.address[i].default == 1) {
+                                        this_.address_list = ret.data.address[i];
+                                        this_.aid = this_.address_list.id;
+                                    }
+                                }
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                    api.addEventListener({
+                        name: 'login_return'
+                    }, function(ret, err) {
+                        this_.address_list = ret.value.text;
+                        this_.aid = this_.address_list.id;
+                    });
+                },
+                address_btn: function() {
+                    api.openWin({
+                        name: 'adress',
+                        url: '../my/address.html',
+                        pageParam: {
+                            text: 1
+                        }
+                    });
+                },
+                ajax: function() {
+                    api.showProgress({
+                        title: '努力加载中...',
+                        text: '先喝杯茶...',
+                        modal: true
+                    });
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Packup',
+                        name: '自提生成订单接口',
+                        query: {
+                            aid: this_.aid,
+                            pid: this_.pid,
+                            number: this_.number
+                        },
+                        success: function(ret) {
+                            console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: '自提成功,两秒钟后跳转',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                setTimeout(function() {
+                                    api.closeToWin({
+                                        name: 'root'
+                                    });
+                                    api.hideProgress();
+                                }, 2000)
+                            } else if(ret.code == 5){
+                                api.toast({
+                                    msg: "请登录",
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.hideProgress();
+                            }else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.hideProgress();
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

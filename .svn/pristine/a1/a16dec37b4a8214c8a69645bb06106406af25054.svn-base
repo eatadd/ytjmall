@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>荣誉资质</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+<style>
+    .h_200 {
+        height: 230px;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">荣誉资质</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_10">
+                <div class="aui-row bg_f padded_10 radius_4">
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/1.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/2.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/3.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/4.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/5.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/6.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/7.jpg" alt="">
+                    </div>
+                    <div class="aui-col-xs-6 padded_5">
+                        <img class="radius_4 h_200" src="../../res/images/honor/8.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+
+            },
+            mounted: function() {
+                // this.ajax();
+            },
+            methods: {
+
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>销售合计frames</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div id="main" class="padded_t_10">
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="bg_f padded_l_10 padded_r_10 padded_t_5 padded_b_5 radius_4" v-for="(i,index) in list" :key="index">
+                    <p class="padded_t_5 padded_b_5 color_666">
+                        <span>订单号</span>
+                        <span class="float_r">{{i.order_no}}</span>
+                    </p>
+                    <p class="padded_t_5 padded_b_5 color_666">
+                        <span>收件人</span>
+                        <span class="float_r">{{i.full_name}}</span>
+                    </p>
+                    <p class="padded_t_5 padded_b_5 color_666">
+                        <span>收件人电话</span>
+                        <span class="float_r">{{i.mobile}}</span>
+                    </p>
+                    <p class="padded_t_5 padded_b_5 color_666">
+                        <span>销售总计</span>
+                        <span class="float_r">{{i.amount}}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="no_list" v-if="list.length == 0">
+                <img src="../../res/images/no_data.png" alt="">
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        var UILoading = api.require('UILoading');
+        new Vue({
+            el: '#app',
+            data: {
+                id: api.pageParam.id,
+                list: []
+            },
+            mounted: function() {
+                this.ajax();
+                this.up_loading();
+                this.down_loading();
+            },
+            methods: {
+                ajax: function() {
+                    this_ = this;
+                    if (this_.id == 0) {
+                        utils.request({
+                            url: utils.base_domain + '/api/user/GiftList',
+                            name: '销售礼包列表--销售总计',
+                            query: {
+                                type: 1
+                            },
+                            success: function(ret) {
+                                if (ret.code == 1) {
+                                    this_.list.push.apply(this_.list,ret.data.giftOrder);
+                                } else {
+                                    api.toast({
+                                        msg: ret.message,
+                                        duration: 2000,
+                                        location: 'bottom'
+                                    });
+                                }
+                            },
+                            error: function(err) {
+                                console.log('err' + JSON.stringify(err));
+                            }
+                        });
+                    } else if (this_.id == 1) {
+                        var myDate = new Date();
+                        myDate.toLocaleDateString();
+                        utils.request({
+                            url: utils.base_domain + '/api/user/GiftList',
+                            name: '销售礼包列表--今日销售',
+                            query: {
+                                startTime: myDate.toLocaleDateString()
+                            },
+                            success: function(ret) {
+                                if (ret.code == 1) {
+                                    this_.list.push.apply(this_.list,ret.data.giftOrder);
+                                } else {
+                                    api.toast({
+                                        msg: ret.message,
+                                        duration: 2000,
+                                        location: 'bottom'
+                                    });
+                                }
+                            },
+                            error: function(err) {
+                                console.log('err' + JSON.stringify(err));
+                            }
+                        });
+                    }
+                },
+                up_loading: function() {
+                    this_ = this;
+                    api.setRefreshHeaderInfo({
+                        visible: true,
+                        loadingImg: '../image/timg.gif',
+                        bgColor: '#ccc',
+                        textColor: '#fff',
+                        textDown: '下拉刷新...',
+                        textUp: '松开刷新...',
+                        showTime: true
+                    }, function(ret, err) {
+                        this_.ajax();
+                        setTimeout('api.refreshHeaderLoadDone()', '500');
+                    });
+                },
+                down_loading: function() {
+                    this_ = this;
+                    api.addEventListener({　　
+                        name: 'scrolltobottom',
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function(ret, err) {　　　　
+                        UILoading.flower({
+                            center: {
+                                x: api.winWidth / 2.0,
+                                y: api.winHeight / 2.0
+                            },
+                            size: 30,
+                            fixed: true
+                        }, function(ret) {
+                            // alert(JSON.stringify(ret.id));
+                            this_.ajax();
+                            setTimeout(function() {
+                                var uiloading = api.require('UILoading');
+                                uiloading.closeFlower({
+                                    id: ret.id
+                                });
+                            }, 500)
+                        });
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

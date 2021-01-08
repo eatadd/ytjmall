@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title确认信息</title>
+        <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+        <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+        <link rel="stylesheet" href="../../res/aui/css/aui.css">
+        <link rel="stylesheet" href="../../res/css/main.css">
+        <link rel="stylesheet" href="../../res/css/my/bindmobile.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">确认信息</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="step center fff">
+                <div class="float_l fs_16">
+                    <span>1,确认信息</span>
+                </div>
+                <div class="float_l fs_16">
+                    <span>2,选择礼包</span>
+                </div>
+            </div>
+            <div class="user_logo">
+                <img :src="image_name" alt="">
+                <p>专属顾问:{{username}}</p>
+            </div>
+            <div class="padded_10 user_info">
+                <div class="padded_r_10 padded_b_10 padded_t_10">
+                    <div class="relative">
+                        <p>
+                            <input type="text" v-model="up_code" readonly>
+                        </p>
+                        <p>
+                            <input type="number" class="mobile" v-model="mobile" placeholder="我的手机号码">
+                        </p>
+                        <p class="relative">
+                            <input type="number" class="code" v-model="code" placeholder="短信验证码">
+                            <div class="code_btn m_back fff fs_14 radius_4" @click="SmsLogin">{{send_code}}</div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="padded_10">
+                <div class="padded_10">
+                    <div class="info_ajax radius_4 center fff m_back" @click="login">
+                        确定
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                image_name: '../../res/images/user/ytj_logo.jpg',
+                username: "",
+                up_id: 0,
+                up_code: '',
+                mobile: "",
+                code: "",
+                send_code: "发送",
+            },
+            mounted: function() {
+                this.login_wx();
+            },
+            methods: {
+                login: function() {
+                    this_ = this;
+                    if (!(/^1[3456789]\d{9}$/.test(this.mobile))) {
+                        api.toast({
+                            msg: '手机号码有误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    if (this.code == '') {
+                        api.toast({
+                            msg: '请输入验证码',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    utils.request_({
+                        url: utils.base_domain + '/api/index/MobileCheck',
+                        name: '手机号码购买礼包验证',
+                        query: {
+                            mobile: this_.mobile,
+                            code: this_.code
+                        },
+                        success: function(ret) {
+                            // console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.openWin({
+                                    name: 'selectgift',
+                                    url: './selectgift.html',
+                                    pageParam: {
+
+                                    }
+                                });
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log(err);
+                        }
+                    });
+                },
+                SmsLogin: function() {
+                    this_ = this;
+                    if (!(/^1[3456789]\d{9}$/.test(this.mobile))) {
+                        api.toast({
+                            msg: '手机号码有误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    if (this.send_code != '发送') {
+                        api.toast({
+                            msg: '请勿重复点击',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    utils.request_({
+                        url: utils.base_domain + '/api/index/SmsRegister',
+                        name: '发送注册短信验证码',
+                        query: {
+                            mobile: this_.mobile,
+                        },
+                        success: function(ret) {
+                            console.log('ret' + JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                var time = 60;
+                                time--;
+                                var times = setInterval(function() {
+                                    time--;
+                                    this_.send_code = time;
+                                    if (time == 0) {
+                                        this_.send_code = "发送";
+                                        clearInterval(times);
+                                    }
+                                }, 1000)
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                login_wx: function() {
+                    this_ = this;
+                    var wxPlus = api.require('wxPlus');
+                    wxPlus.isInstalled(function(ret, err) {
+                        if (ret.installed) {
+                            wxPlus.auth({
+                                apiKey: 'wxa80ffa85104b9926'
+                            }, function(ret, err) {
+                                if (ret.status) {
+                                    this_.auth_code = ret.code;
+                                    // 获取信息
+                                    wxPlus.getToken({
+                                        apiKey: 'wxa80ffa85104b9926',
+                                        apiSecret: '6a71e69d9b22b09ffdd10e2440834acd',
+                                        code: ret.code
+                                    }, function(data) {
+                                        if (data.status) {
+                                            // 获取用户信息
+                                            wxPlus.getUserInfo({
+                                                accessToken: data.accessToken,
+                                                openId: data.openId
+                                            }, function(user_ret) {
+                                                if (user_ret.status) {
+                                                    utils.request_({
+                                                        url: utils.base_domain + '/api/index/WecharCheck',
+                                                        name: '微信验证',
+                                                        query: {
+                                                            openid: user_ret.openid,
+                                                            nickname: user_ret.nickname,
+                                                            sex: user_ret.sex,
+                                                            headimgurl: user_ret.headimgurl,
+                                                            unionid: user_ret.unionid,
+                                                        },
+                                                        success: function(info) {
+                                                            if (info.code == 1) {
+                                                                // console.log(JSON.stringify(info));
+                                                                $api.setStorage('up_uid',info.data.uid);
+                                                                this_.up_id = info.data.merchant.id;
+                                                                this_.username = info.data.merchant.username;
+                                                                this_.up_code = info.data.merchant.code;
+                                                                this_.image_name = utils.base_iamge + info.data.merchant.image_name;
+                                                            } else {
+                                                                api.toast({
+                                                                    msg: info.message,
+                                                                    duration: 2000,
+                                                                    location: 'bottom'
+                                                                });
+                                                            }
+                                                        },
+                                                        error: function(err) {
+                                                            console.log('err' + JSON.stringify(err));
+                                                        }
+                                                    });
+                                                } else {
+                                                    api.toast({
+                                                        msg: '网络错误',
+                                                        duration: 2000,
+                                                        location: 'bottom'
+                                                    });
+                                                }
+                                            });
+                                        } else {
+                                            api.toast({
+                                                msg: '网络错误',
+                                                duration: 2000,
+                                                location: 'bottom'
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    api.toast({
+                                        msg: '网络错误',
+                                        duration: 2000,
+                                        location: 'bottom'
+                                    });
+                                }
+                            });
+                        } else {
+                            alert('当前设备未安装微信客户端');
+                        }
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

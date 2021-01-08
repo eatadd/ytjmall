@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>金豆</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div id="main">
+            <div class="padded_l_10 padded_r_10 padded_b_10 list">
+                <div class="padded_t_5 padded_b_5 padded_l_10 padded_r_10 bg_f radius_4 margin_b_10" v-for="(i,index) in list" :key="index">
+                    <div class="padded_t_5 padded_b_5">
+                        <p class="fs_14 color_666">
+                            <span>订单号</span>
+                            <span class="float_r">{{i.order_no}}</span>
+                        </p>
+                    </div>
+                    <div class="padded_t_5 padded_b_5">
+                        <p class="fs_14 color_666">
+                            <span>价格</span>
+                            <span class="float_r m_price">￥{{i.amount}}</span>
+                        </p>
+                    </div>
+                    <div class="padded_t_5 padded_b_5">
+                        <p class="fs_14 color_666">
+                            <span>下单时间</span>
+                            <span class="float_r">{{i.create_date}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="no_list" v-if="list.length == 0">
+                    <img src="../../res/images/no_data.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        var UILoading = api.require('UILoading');
+        new Vue({
+            el: '#app',
+            data: {
+                index: api.pageParam.index,
+                start: 0,
+                list: []
+            },
+            mounted: function() {
+                this.up_loading();
+                this.down_loading();
+                this.ajax();
+            },
+            methods: {
+                ajax: function() {
+                    this_ = this;
+                    console.log(this_.index + this_.start);
+                    utils.request({
+                        url: utils.base_domain + '/api/user/jindou',
+                        name: '获取金豆日志',
+                        query: {
+                            start: this_.start,
+                            type: this_.index
+                        },
+                        success: function(ret) {
+                            console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                this_.start += 10;
+                                this_.list.push.apply(this_.list, ret.data.stock);
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                up_loading: function() {
+                    this_ = this;
+                    api.setRefreshHeaderInfo({
+                        visible: true,
+                        loadingImg: '../image/timg.gif',
+                        bgColor: '#ccc',
+                        textColor: '#fff',
+                        textDown: '下拉刷新...',
+                        textUp: '松开刷新...',
+                        showTime: true
+                    }, function(ret, err) {
+                        this_.ajax();
+                        setTimeout('api.refreshHeaderLoadDone()', '500');
+                    });
+                },
+                down_loading: function() {
+                    this_ = this;
+                    api.addEventListener({　　
+                        name: 'scrolltobottom',
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function(ret, err) {　　　　
+                        UILoading.flower({
+                            center: {
+                                x: api.winWidth / 2.0,
+                                y: api.winHeight / 2.0
+                            },
+                            size: 30,
+                            fixed: true
+                        }, function(ret) {
+                            // alert(JSON.stringify(ret.id));
+                            this_.ajax();
+                            setTimeout(function() {
+                                var uiloading = api.require('UILoading');
+                                uiloading.closeFlower({
+                                    id: ret.id
+                                });
+                            }, 500)
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

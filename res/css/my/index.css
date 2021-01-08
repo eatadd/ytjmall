@@ -1,0 +1,50 @@
+.user-info {
+    background-color: #ffffff;
+    padding: 0.75rem 0;
+}
+
+img.avatar {
+    display: block;
+    margin: 0 auto;
+    width: 20%;
+}
+
+.aui-list .aui-list-header {
+    background-color: #ffffff;
+    line-height: 1.2rem;
+}
+
+.aui-list .aui-list-item {
+    background-color: #f8f6ef;
+}
+.tab p{
+    position: relative;
+    top:5px;
+}
+.tab img{
+    width: 30px;
+    margin: 0 auto;
+}
+.list_img_l{
+    width: 30px;
+    position: relative;
+    top:-2px;
+}
+.list_con{
+    width: calc(100% - 30px);
+}
+.list_con span{
+    position: relative;
+    left: 4px;
+}
+html{
+    background: #f5f5f5;
+}
+.inviteCode input{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top:0;
+    z-index: 3;
+    opacity: 0;
+}

@@ -1,0 +1,18 @@
+#main {
+    padding-bottom: 60px;
+}
+.address_chose{
+    padding: 1px 5px!important;
+    line-height: 1.5em!important;
+    height: 20px!important;
+}
+.img_con{
+    width: 70px;
+}
+.list_info{
+    width: calc(100% - 80px);
+}
+.list_text_r{
+    position: relative;
+    top:4px;
+}

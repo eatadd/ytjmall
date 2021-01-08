@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>销售合计</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+<style>
+    .choose_lib_act {
+        color: #FFF;
+        background: #03a9f4 !important;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">{{title}}</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_10">
+                <div class="padded_5 bg_f radius_4 center fs_14">
+                    <div>
+                        <div class="color_333 width_25 float_l padded_t_5 padded_b_5 radius_4 choose_lib" v-for="(i,index) in list_top" :key="index" @click="list_btn(index)" :class="act == index ? 'choose_lib_act' : ''">
+                            {{i}}
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                list_top: ['销售总计', '今日销售', '直接销售', '间接销售'],
+                act: 0,
+                title: api.pageParam.title || 'VIP'
+            },
+            mounted: function() {
+                this.openFrameGroup();
+            },
+            methods: {
+                list_btn: function(index) {
+                    this.act = index;
+                    api.setFrameGroupIndex({
+                        name: 'gift_lists',
+                        index: index
+                    });
+                },
+                openFrameGroup: function() {
+                    this_ = this;
+                    api.openFrameGroup({
+                        name: 'gift_lists',
+                        rect: {
+                            x: 0,
+                            y: $api.dom('#main').offsetHeight,
+                            w: 'auto',
+                            h: 'auto'
+                        },
+                        scrollEnabled: false,
+                        preload: 0,
+                        frames: [{
+                            name: 'giftlist_frames',
+                            url: './giftlist_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                'id': 0
+                            }
+                        }, {
+                            name: 'giftlist_frames',
+                            url: './giftlist_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                'id': 1
+                            }
+                        }, {
+                            name: 'giftlist_frames',
+                            url: './giftlist_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                'id': 0
+                            }
+                        }, {
+                            name: 'giftlist_frames',
+                            url: './giftlist_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                'id': 3
+                            }
+                        }]
+                    }, function(ret, err) {
+                        this_.act = ret.index;
+                        api.setFrameGroupIndex({
+                            name: 'gift_lists',
+                            index: ret.index
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

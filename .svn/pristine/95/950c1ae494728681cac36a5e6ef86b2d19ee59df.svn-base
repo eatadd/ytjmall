@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>添加银行卡</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">添加银行卡</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="list_con margin_t_5">
+                <div class="padded_b_5 padded_t_10 padded_l_10 padded_r_10">
+                    <div class=" padded_t_10 bg_f radius_4">
+                        <div class="aui-content aui-margin-b-15">
+                            <ul class="aui-list aui-form-list">
+                                <li class="aui-list-item">
+                                    <div class="aui-list-item-inner">
+                                        <div class="aui-list-item-label color_999">
+                                            银行卡
+                                        </div>
+                                        <div class="aui-list-item-input">
+                                            <select class="color_999" @change="selectFn($event)">
+                                                <option>中国银行</option>
+                                                <option>中国建设银行</option>
+                                                <option>招商银行</option>
+                                                <option>中国农业银行</option>
+                                                <option>北京银行</option>
+                                                <option>中国工商银行</option>
+                                                <option>交通银行</option>
+                                                <option>中国邮政储蓄银行</option>
+                                                <option>中国民生银行</option>
+                                                <option>中国光大银行</option>
+                                                <option>中信银行</option>
+                                                <option>兴业银行</option>
+                                                <option>中国农业发展银行</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="aui-list-item">
+                                    <div class="aui-list-item-inner">
+                                        <div class="aui-list-item-label color_999">
+                                            卡号
+                                        </div>
+                                        <div class="aui-list-item-input">
+                                            <input type="number" placeholder="卡号" v-model="id_card">
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="padded_10 footer">
+                <div class="radius_4 fff center m_back padded_t_10 padded_b_10" @click="ajax_post()">添加</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                start: 0,
+                list: [],
+                bank: '中国银行',
+                id_card: ''
+            },
+            mounted: function() {
+
+            },
+            methods: {
+                selectFn(e) {
+                    this.bank = e.target.value;
+                },
+                ajax_post: function() {
+                    this_ = this;
+                    if (this_.id_card == '') {
+                        api.toast({
+                            msg: '请输入卡号',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    api.showProgress({
+                        title: '努力加载中...',
+                        text: '先喝杯茶...',
+                        modal: true
+                    });
+                    utils.request({
+                        url: utils.base_domain + '/api/user/BankAdd',
+                        name: '添加银行卡',
+                        query: {
+                            bank: this_.bank,
+                            id_card: this_.id_card
+                        },
+                        success: function(ret) {
+                            console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                api.toast({
+                                    msg: '提交成功',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.sendEvent({
+                                    name: 'card',
+                                    extra: {
+                                        text: 1
+                                    }
+                                });
+                                api.hideProgress();
+                                setTimeout(function() {
+                                    api.closeWin();
+                                }, 500)
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.hideProgress();
+                            }
+                        },
+                        error: function(err) {
+                            api.hideProgress();
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

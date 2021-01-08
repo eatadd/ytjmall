@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>订单</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" href="../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../res/css/main.css">
+    <link rel="stylesheet" href="../res/css/order/index.css">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="aui-bar aui-bar-btn aui-bar-btn-full">
+                <div class="aui-bar-btn-item" :class="{ 'aui-active': activeClass == index }" v-for="(i,index) in full" :key="index" @click="menu_1(index)" v-html="i"></div>
+            </div>
+            <div class="aui-bar aui-bar-btn margin_t_5" style="width:95%;" v-if="activeClass == 0">
+                <div class="aui-bar-btn-item" :class="{ 'aui-active': activeClass2 == index }" v-for="(i,index) in full2" :key="index" @click="menu_2(index)" v-html="i"></div>
+            </div>
+            <div class="aui-bar aui-bar-btn margin_t_5" style="width:95%;" v-if="activeClass == 1">
+                <div class="aui-bar-btn-item" :class="{ 'aui-active': activeClass2__ == index }" v-for="(i,index) in full2__" :key="index" @click="menu_2__(index)" v-html="i"></div>
+            </div>
+        </header>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../res/vue/vue.js"></script>
+<script type="text/javascript" src="../res/script/utils.js"></script>
+<script>
+    // for (var i = 0; i < $api.domAll(".menu_t").length; i++) {
+    //     console.log(i);
+    //     frameNames = i;
+    // }
+    apiready = function() {
+        $api.setStorage('order_index_h', $api.getStorage('main_h') - $api.getStorage('footer_h') - 25); //设置
+        new Vue({
+            el: '#app',
+            data: {
+                full: ['我的订单', '消费者订单'],
+                full2: ['全部订单', '待发货', '待收货'],
+                full2__: ['全部订单', '待付款', '待发货', '待收货'],
+                activeClass: 0, //顶部1选中
+                activeClass2: 0, //顶部1选中
+                activeClass2__: 0, //顶部2选中
+            },
+            mounted: function() {
+                this.menu_1(0);
+            },
+            methods: {
+                menu_1: function(index) {
+                    var this_ = this;
+                    this.activeClass = index;
+                    if (index == 0) {
+                        api.setFrameGroupAttr({
+                            name: 'frameName_2',
+                            hidden: true
+                        });
+                        api.openFrameGroup({
+                            name: 'frameName_1',
+                            scrollEnabled: false,
+                            rect: {
+                                x: 0,
+                                y: $api.dom('header').offsetHeight + 26,
+                                w: api.winWidth,
+                                h: $api.getStorage('main_h') - $api.getStorage('footer_h') - 25
+                            },
+                            index: this_.activeClass2,
+                            frames: [{
+                                name: 'order0',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 0,
+                                    'FrameIndex_1': 0
+                                }
+                            }, {
+                                name: 'order1',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 0,
+                                    'FrameIndex_1': 1
+                                }
+                            }, {
+                                name: 'order2',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 0,
+                                    'FrameIndex_1': 2
+                                }
+                            }]
+                        }, function(ret, err) {
+                            this_.activeClass2 = ret.index;
+                        });
+                    } else {
+                        api.setFrameGroupAttr({
+                            name: 'frameName_1',
+                            hidden: true
+                        });
+                        api.openFrameGroup({
+                            name: 'frameName_2',
+                            scrollEnabled: false,
+                            rect: {
+                                x: 0,
+                                y: $api.dom('header').offsetHeight + 26,
+                                w: api.winWidth,
+                                h: $api.getStorage('main_h') - $api.getStorage('footer_h') - 25
+                            },
+                            index: this_.activeClass2__,
+                            frames: [{
+                                name: 'order0_',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 1,
+                                    'FrameIndex_1': 11
+                                }
+                            }, {
+                                name: 'order1_',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 1,
+                                    'FrameIndex_1': 0
+                                }
+                            }, {
+                                name: 'order2_',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 1,
+                                    'FrameIndex_1': 1
+                                }
+                            }, {
+                                name: 'order3_',
+                                url: './order/index_frame.html',
+                                bgColor: '#fff',
+                                pageParam: {
+                                    'FrameIndex': 1,
+                                    'FrameIndex_1': 2
+                                }
+                            }, ]
+                        }, function(ret, err) {
+                            this_.activeClass2__ = ret.index;
+                        });
+                    }
+                },
+                menu_2: function(index) {
+                    this.activeClass2 = index;
+                    api.setFrameGroupIndex({
+                        name: 'frameName_1',
+                        index: this.activeClass2
+                    });
+                    api.setFrameGroupIndex({
+                        name: 'frameName_2',
+                        index: this.activeClass2__
+                    });
+                },
+                menu_2__: function(index) {
+                    this.activeClass2__ = index;
+                    api.setFrameGroupIndex({
+                        name: 'frameName_1',
+                        index: this.activeClass2
+                    });
+                    api.setFrameGroupIndex({
+                        name: 'frameName_2',
+                        index: this.activeClass2__
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的产品库</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/achievement.css">
+</head>
+<style>
+    .product_top img {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        top: 10px;
+        left: 10px;
+    }
+
+    .product_top {
+        width: 70px;
+        height: 60px;
+    }
+
+    .product_text {
+        width: 100%;
+        height: 60px;
+    }
+
+    .product_text p {
+        position: relative;
+        top: 5px;
+    }
+
+    .choose_lib_act {
+        background: #03a9f4;
+        color: #FFF;
+    }
+
+    .go_buy {
+        position: fixed;
+        bottom: 0;
+        width: calc(100% - 20px);
+        max-width: 748px;
+    }
+
+    .go_buy_btn {
+        padding: 10px 0;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">我的产品库</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <div class="padded_10">
+                <div class="padded_10 m_back fff radius_4">
+                    <div class="product_text center">
+                        <p class="fs_16 fff">我的产品库</p>
+                        <p class="fs_20 fff">￥{{stock}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="padded_r_10 padded_l_10 padded_b_10">
+                <div class="padded_5 bg_f radius_4 center fs_14">
+                    <div>
+                        <div class="width_20 float_l padded_t_5 padded_b_5 radius_4 choose_lib" :class="act == index ? 'choose_lib_act' : ''" v-for="(i,index) in list_top" :key="index" @click="list_btn(index)">
+                            {{i.title}}
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                list_top: [{
+                    title: '50VIP',
+                }, {
+                    title: '自提',
+                }, {
+                    title: '开店库存',
+                }, {
+                    title: '进货',
+                }, {
+                    title: '零售',
+                }],
+                act: 0,
+                stock: 0
+            },
+            mounted: function() {
+                this.init();
+                this.ajax();
+                this.openFrameGroup();
+            },
+            methods: {
+                init: function() {
+                    api.addEventListener({
+                        name: 'stock_return'
+                    }, function(ret, err) {
+                        if (ret.value.text == 1) {
+                            window.location.reload();
+                        }
+                    });
+                },
+                list_btn: function(index) {
+                    this.act = index;
+                    api.setFrameGroupIndex({
+                        name: 'stock_lists',
+                        index: index
+                    });
+                },
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Info',
+                        name: '获取用户基本信息',
+                        query: {
+                            start: 1,
+                            type: 1
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.stock = ret.data.user.stock;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                openFrameGroup: function() {
+                    this_ = this;
+                    api.openFrameGroup({
+                        name: 'stock_lists',
+                        rect: {
+                            x: 0,
+                            y: $api.dom('#main').offsetHeight,
+                            w: 'auto',
+                            h: 'auto'
+                        },
+                        preload: 0,
+                        scrollEnabled: false,
+                        frames: [{
+                            name: 'stock',
+                            url: './stock_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                index: 5
+                            }
+                        }, {
+                            name: 'stock',
+                            url: './stock_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                index: 2
+                            }
+                        }, {
+                            name: 'stock',
+                            url: './stock_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                index: 4
+                            }
+                        }, {
+                            name: 'stock',
+                            url: './stock_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                index: 3
+                            }
+                        }, {
+                            name: 'stock',
+                            url: './stock_frames.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                index: 1
+                            }
+                        }]
+                    }, function(ret, err) {
+                        this_.act = ret.index;
+                        api.setFrameGroupIndex({
+                            name: 'stock_lists',
+                            index: ret.index
+                        });
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>消息详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/info/info_details_frame.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <section>
+            <div class="aui-chat" v-for="(i,index) in list" :key="index">
+                <div class="aui-chat-item aui-chat-left" v-if="i.send != 1">
+                    <div class="aui-chat-media">
+                        <img :src="i.send_image" />
+                    </div>
+                    <div class="aui-chat-inner">
+                        <div class="aui-chat-name">{{i.send_name}}</div>
+                        <div class="aui-chat-content">
+                            <div class="aui-chat-arrow"></div>
+                            {{i.message}}
+                        </div>
+                    </div>
+                </div>
+                <div class="aui-chat-item aui-chat-right" v-if="i.send != 0">
+                    <div class="aui-chat-media">
+                        <img :src="i.send_image" />
+                    </div>
+                    <div class="aui-chat-inner">
+                        <div class="aui-chat-name">{{i.send_name}}</div>
+                        <div class="aui-chat-content">
+                            <div class="aui-chat-arrow"></div>
+                            {{i.message}}
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </section>
+        <footer class="aui-bar aui-bar-tab footer">
+            <div class="aui-bar-tab-item aui-padded-l-15 aui-padded-r-15" tapmode style="width: auto;">
+                <input type="text" class="search-input aui-font-size-14" v-model="val" placeholder="请输入">
+            </div>
+            <div class="aui-bar-tab-item" tapmode style="width: 3rem;">
+                <!-- <i class="aui-iconfont aui-icon-comment"></i> -->
+                <span class="send_input fff radius_4 m_back fs_14" @click="send">发送</span>
+            </div>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        // alert($api.dom('header').offsetHeight);
+        new Vue({
+            el: '#app',
+            data: {
+                start: 0,
+                val: '',
+                Message: {
+                    messageuid: api.pageParam.id,
+                    type: 'MerchantGetList',
+                    auth: $api.getStorage('auth'),
+                },
+                list: [],
+                send_info: {},
+                title: ''
+            },
+            mounted: function() {
+                this.init();
+                this.up_load();
+            },
+            methods: {
+                init: function() {
+                    this_ = this;
+                    ws = new WebSocket("ws://192.168.0.106:20002");
+                    ws.onerror = function() {
+                        console.log("出现错误");
+                    };
+                    ws.onopen = function() {
+                        // console.log(JSON.stringify(this_.Message));
+                        ws.send(JSON.stringify(this_.Message));
+                    };
+                    ws.onmessage = function(e) {
+                        var ret = JSON.parse(e.data);
+                        // console.log(JSON.stringify(ret.message));
+                        if (ret.code == 10) {
+                            // this_.list.push.apply(this_.list, ret.message);
+                            var length_end = true;
+                            if(ret.message.length == 20){
+                                if(length_end){
+                                    this_.list = ret.message.concat(this_.list);
+                                    length_end = false;
+                                }
+                            }
+                            if(ret.message.length < 20){
+                                if(length_end){
+                                    this_.list = ret.message.concat(this_.list);
+                                    length_end = false;
+                                }
+                            }
+                            for (i in ret.message) {
+                                if (ret.message[i].send == 1) {
+                                    this_.send_info.send_name = ret.message[i].send_name;
+                                    this_.send_info.send_image = ret.message[i].send_image;
+                                }else {
+                                    this_.title = ret.message[i].send_name;
+                                }
+                            }
+                        } else if (ret.code == 3) {
+                            ret.message[0].send = 0;
+                            data = ret.message[0];
+                            this_.user_sendinfo(data);
+                        }
+                        if(this_.list.length == 20){
+                            setTimeout(function() {
+                                window.scrollTo(0, document.body.scrollHeight);
+                            }, 0)
+                        }
+                    };
+                },
+                user_sendinfo: function (e) {
+                    this_ = this;
+                    this_.list = this_.list.concat(e);
+                },
+                send: function() {
+                    this_ = this;
+                    var openDelay=false;
+                    if(openDelay)return;
+                    if (this_.val == '') {
+                        api.toast({
+                            msg: '请输入',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return;
+                    }
+                    this_.Message.message = this_.val;
+                    this_.Message.type = "MerchantMessage";
+                    ws.send(JSON.stringify(this_.Message));
+                    this_.val = '';
+                    this_.send_info.send = 1;
+                    this_.send_info.message = this_.Message.message;
+                    var info = this_.send_info;
+                    info = JSON.parse(JSON.stringify(info));
+                    this_.list = this_.list.concat(info);
+                    setTimeout(function() {
+                        window.scrollTo(0, document.body.scrollHeight);
+                    }, 0)
+                },
+                up_load: function() {
+                    this_ = this;
+                    api.addEventListener({
+                        name: 'swipedown',
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function(data, err) {
+                        var id = this_.list[0].id;
+                        this_.Message.id = id;
+                        ws.send(JSON.stringify(this_.Message));
+                        console.log("已滚动到顶部");
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

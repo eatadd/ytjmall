@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>金豆</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+</head>
+<style>
+    .today_sale {
+        background: url("../../res/images/index/yun_1.png") no-repeat;
+        background-size: 100% 100%;
+        line-height: 2em;
+        padding-bottom: 20px;
+    }
+
+    .today_sale p:nth-child(2) {
+        font-size: 20px;
+    }
+
+    .price_info {
+        padding-top: 6px;
+    }
+
+    .price_info:nth-child(1) {
+        border-right: 1px solid #E6E6E6;
+        box-sizing: border-box;
+    }
+
+    .price_info p:nth-child(2) {
+        font-size: 16px;
+        color: #FF7F0E;
+    }
+
+    .bean_text {
+        position: relative;
+        top: -5px;
+    }
+
+    .price_out {
+        display: inline-block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        color: #2F80ED;
+        border-top-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        font-size: 14px;
+        padding: 0 20px;
+    }
+
+    .list_img {
+        width: 30px;
+    }
+
+    .list_img img {
+        width: 25px;
+    }
+
+    .list_con {
+        width: calc(100% - 30px);
+    }
+
+    .list_con i {
+        margin-top: 4px;
+    }
+
+    .price_out_ {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .price_out_btn {
+        padding: 10px 0;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">我的金豆</div>
+        </header>
+        <div id="main">
+            <div class="padded_10" @click="jindoulib">
+                <div class="fff padded_10 radius_4 today_sale relative">
+                    <p class="fs_14">
+                        <span class="bean_text fff">金豆库</span>
+                    </p>
+                    <p class="text_1 fw_600 fff">￥{{allprice}}</p>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_10 bg_f center radius_4">
+                    <div class="width_50 float_l price_info">
+                        <p class="text_1 fs_14 color_333">今日收入</p>
+                        <p class="text_1">￥{{info.TAmount}}</p>
+                    </div>
+                    <div class="width_50 float_l price_info">
+                        <p class="text_1 fs_14 color_333">昨日收入</p>
+                        <p class="text_1">￥{{info.YAmount}}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="padded_r_10 padded_l_10 padded_b_10" onclick="utils.openWin('monthly' , './monthly.html')">
+                <div class="padded_10 bg_f radius_4">
+                    <div class="float_l list_img">
+                        <img src="../../res/images/index/svg/moon.svg" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="list_text fs_14 color_666">月结</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="padded_r_10 padded_l_10 padded_b_10" onclick="utils.openWin('withdraw_list' , './withdraw_list.html')">
+                <div class="padded_10 bg_f radius_4">
+                    <div class="float_l list_img">
+                        <img src="../../res/images/index/svg/order.svg" alt="">
+                    </div>
+                    <div class="list_con float_l">
+                        <span class="list_text fs_14 color_666">提现记录</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="padded_10 price_out_" onclick="utils.openWin('cashout' , './cashout.html')">
+            <div class="price_out_btn center radius_4 fff m_back">
+                提现
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                info: {},
+                allprice: 0
+            },
+            mounted: function() {
+                this.ajax();
+                this.allprice_();
+            },
+            methods: {
+                jindoulib: function() {
+                    this_ = this;
+                    api.openWin({
+                        name: 'jindoulib',
+                        url: './jindoulib.html',
+                        pageParam: {
+                            allprice: this_.allprice
+                        }
+                    });
+                },
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/jindou/Info',
+                        name: '获取金豆首页数据(昨日，今日收益)',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.info = ret.data;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                allprice_: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Info',
+                        name: '获取用户基本信息)',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.allprice = parseFloat(ret.data.user.jindou) + parseFloat(ret.data.user.frozen);
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+            }
+        })
+    }
+</script>
+
+</html>

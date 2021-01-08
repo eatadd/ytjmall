@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>今日销售</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/order/index.css">
+</head>
+<style>
+    .today_sale {
+        background: url("../../res/images/index/yun_2.png") no-repeat;
+        background-size: 100% 100%;
+        line-height: 2em;
+        padding-top: 20px;
+    }
+
+    .today_sale p:nth-child(2) {
+        font-size: 20px;
+    }
+
+    .price_info:nth-child(1) {
+        border-right: 1px solid #E6E6E6;
+        box-sizing: border-box;
+    }
+
+    .price_info p:nth-child(2) {
+        font-size: 16px;
+        color: #FF7F0E;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">今日销售</div>
+        </header>
+        <div id="main">
+            <div class="padded_l_10 padded_r_10 padded_t_5 padded_b_5">
+                <div class="fff center padded_5 radius_4 today_sale">
+                    <p class="fs_16 fff">实销</p>
+                    <p class="text_1 fw_600 fff">￥{{orderAmount}}</p>
+                </div>
+            </div>
+            <div class="padded_l_10 padded_r_10">
+                <div class="padded_l_10 padded_r_10 bg_f center radius_4">
+                    <div class="width_50 float_l price_info padded_5 padded_t_10" @click="type(0)">
+                        <p class="fs_14 color_333">实销收入</p>
+                        <p class="">￥{{orderAmount}}</p>
+                    </div>
+                    <div class="width_50 float_l price_info padded_5 padded_t_10" @click="type(1)">
+                        <p class="fs_14 color_333">订单退款</p>
+                        <p class="">￥0.00</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                orderAmount: 0,
+                list: []
+            },
+            mounted: function() {
+                this.openFrameGroup();
+            },
+            methods: {
+                type: function(index) {
+                    api.setFrameGroupIndex({
+                        name: 'sale_frame',
+                        index: index
+                    });
+                },
+                openFrameGroup: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Sale',
+                        name: '今日销售',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.orderAmount = ret.data.orderAmount;
+                                this_.list = ret.data.order;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                    api.openFrameGroup({
+                        name: 'sale_frame',
+                        rect: {
+                            x: 0,
+                            y: $api.dom('#app').offsetHeight + 10,
+                            w: 'auto',
+                            h: 'auto'
+                        },
+                        frames: [
+                            {
+                            name: 'sale_frame',
+                            url: './sale_frame.html',
+                            bgColor: '#fff',
+                            pageParam: {
+                                'list': this_.list,
+                                'id': 0
+                            }
+                        }
+                        // , {
+                        //     name: 'sale_frame',
+                        //     url: './sale_frame.html',
+                        //     bgColor: '#fff',
+                        //     pageParam: {
+                        //         'list': this_.list
+                        //     }
+                        // }
+                    ]
+                    }, function(ret, err) {
+                        var index = ret.index;
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>首页</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" href="../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../res/css/main.css">
+    <link rel="stylesheet" href="../res/css/index/index.css">
+    <link rel="stylesheet" type="text/css" href="../res/aui/css/aui-slide.css" />
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="padded_10">
+            <div id="aui-slide3">
+                <div class="aui-slide-wrap">
+                    <div class="aui-slide-node bg-dark" v-for="(i,index) in slide" :key="index">
+                        <img class="radius_4" :src="i.image_name" />
+                    </div>
+                </div>
+                <div class="aui-slide-page-wrap">
+                    <!--分页容器-->
+                </div>
+            </div>
+        </div>
+        <!-- tab -->
+        <div class="tab padded_l_10 padded_r_10 padded_b_10">
+            <div class="padded_r_10 padded_l_10 padded_t_10 bg_f radius_4">
+                <div class="tab_btn float_l center" v-for="(i, index) in tab" :key="index">
+                    <img :src="i.src" alt="">
+                    <p class="center text_1 fs_12">{{i.text}}</p>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="padded_b_10 padded_l_10 padded_r_10" v-if="isShow" onclick="utils.openWin('bindmobile','./index/bindmobile.html')">
+            <img class="width_100 radius_4" src="../res/images/index/gift.png" title="">
+        </div>
+        <!--  今日销售  -->
+        <div class="padded_b_10 padded_l_10 padded_r_10" @click="openWin('sale')">
+            <div class="today_sale fff relative">
+                <p class="fff">今日销售</p>
+                <p class="fff">￥{{TAmount}}</p>
+                <img src="../res/images/index/yun_1_right.png" class="yun_right" alt="">
+            </div>
+        </div>
+        <!--  我的金豆  -->
+        <div class="padded_b_10 padded_l_10 padded_r_10" @click="openWin('jindou')">
+            <div class="today_sale_ fff relative">
+                <p class="fff">我的金豆</p>
+                <p class="fff">￥{{jindou}}</p>
+                <img src="../res/images/index/yun_2_right.png" class="yun_right" alt="">
+            </div>
+        </div>
+        <!-- 荣誉资质 -->
+        <div class="padded_b_10 padded_l_10 padded_r_10 center">
+            <div class="padded_10 radius_4 bg_f">
+                <div class="drawing float_l width_50" onclick="utils.openWin('honor' , './index/honor.html')">
+                    <img src="../res/images/index/tab_1.png" alt="">
+                    <p class="text_1 color_333">荣誉资质</p>
+                </div>
+                <div class="drawing float_l width_50" onclick="utils.openWin('packupgood' , './index/packupgood.html')">
+                    <img src="../res/images/index/tab_2.png" alt="">
+                    <p class="text_1 color_333">我要自提</p>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!-- 资质证书 -->
+        <!--  新闻头条  -->
+        <div class="padded_b_10 padded_l_10 padded_r_10">
+            <p class="news_head">资质证书</p>
+            <div class="news_content bg_f radius_4">
+                <div class="news_lists radius_4" v-for="(i , index) in certificate">
+                    <img class="radius_4 preview" @click="photoBrowser(index)" :src="i" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../res/vue/vue.js"></script>
+<script type="text/javascript" src="../res/script/utils.js"></script>
+<script type="text/javascript" src="../res/aui/script/aui-slide.js"></script>
+<script>
+    apiready = function() {
+        utils.init();
+        var UILoading = api.require('UILoading');
+        var photoBrowser = api.require('photoBrowser');
+        new Vue({
+            el: '#app',
+            data: {
+                slide: [{
+                    src: '../res/images/index/banner_1.png'
+                }, {
+                    src: '../res/images/index/banner_2.jpg'
+                }, ],
+                tab: [{
+                    src: '../res/images/index/nav_1.png',
+                    text: '创业简单化'
+                }, {
+                    src: '../res/images/index/nav_2.png',
+                    text: '购物便捷化'
+                }, {
+                    src: '../res/images/index/nav_3.png',
+                    text: '社交多元化'
+                }],
+                certificate: ['http://static.ytjmall.com/img/user_certificate/1_.png', 'http://static.ytjmall.com/img/user_certificate/1.png'],
+                isShow: true,
+                jindou: '',
+                TAmount: ""
+            },
+            mounted: function() {
+                this.banner();
+                this.init();
+                this.setRefreshHeaderInfo();
+            },
+            methods: {
+                banner: function () {
+                    this_ = this;
+                    utils.request_({
+                        url: utils.base_domain + '/api/index/GetBanner',
+                        name: '获取banner',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                // console.log(JSON.stringify(ret));
+                                for (var i = 0; i < ret.data.length; i++) {
+                                    ret.data[i].image_name = utils.base_iamge + ret.data[i].image_name;
+                                }
+                                this_.slide = ret.data;
+                                // console.log(JSON.stringify(ret.data));``
+                                setTimeout(function () {
+                                    var slide3 = new auiSlide({
+                                        container: document.getElementById("aui-slide3"),
+                                        // "width":300,
+                                        "height": 200,
+                                        "speed": 500,
+                                        "autoPlay": 3000, //自动播放
+                                        "loop": true,
+                                        "pageShow": true,
+                                        "pageStyle": 'dot',
+                                        'dotPosition': 'center'
+                                    })
+                                },200)
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                init: function() {
+                    if ($api.getStorage('token') != undefined) {
+                        this.isShow = false;
+                    }
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Info',
+                        name: '获取用户基本信息',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            // console.log(JSON.stringify(ret));
+                            if (ret.code == 1) {
+                                this_.jindou = ret.data.user.jindou;
+                            } else {
+                                console.log(JSON.stringify(ret));
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                // if (ret.message = '未认证') {
+                                //     api.openWin({
+                                //         name: 'authentication',
+                                //         url: './index/authentication.html',
+                                //         pageParam: {
+                                //
+                                //         }
+                                //     });
+                                // }
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + err);
+                        }
+                    });
+                    utils.request({
+                        url: utils.base_domain + '/api/user/jindou/Info',
+                        name: '获取金豆首页数据(昨日，今日收益)',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.TAmount = ret.data.TAmount;
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                },
+                openWin: function(e) {
+                    api.openWin({
+                        name: 'e',
+                        url: './index/' + e + '.html',
+                        pageParam: {
+                            qr_code: this.qr_code
+                        }
+                    });
+                },
+                photoBrowser: function(index) {
+                    photoBrowser.open({
+                        images: this.certificate,
+                        // placeholderImg: 'widget://res/img/apicloud.png',
+                        bgColor: '#000',
+                        activeIndex: index
+                    }, function(ret, err) {
+                        if (ret) {
+                            console.log(JSON.stringify(ret));
+                            if (ret.eventType == "click") {
+                                photoBrowser.close();
+                            }
+                        } else {
+                            console.log(JSON.stringify(err));
+                            if (ret.eventType == "click") {
+                                photoBrowser.close();
+                            }
+                        }
+                    });
+                },
+                setRefreshHeaderInfo: function() {
+                    this_ = this;
+                    api.setRefreshHeaderInfo({
+                        visible: true,
+                        loadingImg: '../image/timg.gif',
+                        bgColor: '#ccc',
+                        textColor: '#fff',
+                        textDown: '下拉刷新...',
+                        textUp: '松开刷新...',
+                        showTime: true
+                    }, function(ret, err) {
+                        this_.init();
+                        this_.banner();
+                        setTimeout('api.refreshHeaderLoadDone()', '500');
+                    });
+                },
+            }
+        })
+        api.addEventListener({　　
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0
+            }
+        }, function(ret, err) {　　　　
+            UILoading.flower({
+                center: {
+                    x: api.winWidth / 2.0,
+                    y: api.winHeight / 2.0
+                },
+                size: 30,
+                fixed: true
+            }, function(ret) {
+                // alert(JSON.stringify(ret.id));
+                setTimeout(function() {
+                    var uiloading = api.require('UILoading');
+                    uiloading.closeFlower({
+                        id: ret.id
+                    });
+                }, 500)
+            });
+        });
+    }
+
+    function photoBrowser(index) {
+        photoBrowser.open({
+            images: [
+                'http://static.ytjmall.com/img/user_certificate/1_.png',
+                'http://static.ytjmall.com/img/user_certificate/1.png'
+            ],
+            placeholderImg: 'widget://res/img/apicloud.png',
+            bgColor: '#000',
+            activeIndex: index
+        }, function(ret, err) {
+            if (ret) {
+                alert(JSON.stringify(ret));
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+</script>
+
+</html>

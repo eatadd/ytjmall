@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>礼包销售</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/gift.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">礼包销售</div>
+        </header>
+        <div id="main" class="main_padded_t margin_t_10">
+            <div class="padded_l_10 padded_r_10 padded_b_10" onclick="utils.openWin('giftlist','./giftlist.html',{title: 'VIP礼包合计'})">
+                <div class="padded_10 fff m_back VIP_tit">
+                    <p class="fs_16">
+                        <span class="fff">30VIP礼包</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </p>
+                </div>
+                <div class="VIP_ bg_f padded_b_10">
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">{{info.sanCount}}</p>
+                        <p class="color_999 fs_14">礼包销售总计</p>
+                    </div>
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">{{info.sanToday}}</p>
+                        <p class="color_999 fs_14">今日销售</p>
+                    </div>
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">{{info.sanCount}}</p>
+                        <p class="color_999 fs_14">直接销售</p>
+                    </div>
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">0</p>
+                        <p class="color_999 fs_14">间接销售</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+                <div class="padded_l_10 padded_r_10 padded_b_10" onclick="utils.openWin('giftlist','./giftlist.html',{'title': 'VIP礼包合计'})">
+                <div class="padded_10 fff m_back VIP_tit">
+                    <p class="fs_16">
+                        <span class="fff">50VIP礼包</span>
+                        <i class="aui-iconfont aui-icon-right float_r"></i>
+                    </p>
+                </div>
+                <div class="VIP_ bg_f padded_b_10">
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">{{info.wuCount}}</p>
+                        <p class="color_999 fs_14">礼包销售总计</p>
+                    </div>
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">{{info.wuToday}}</p>
+                        <p class="color_999 fs_14">今日销售</p>
+                    </div>
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">{{info.wuCount}}</p>
+                        <p class="color_999 fs_14">直接销售</p>
+                    </div>
+                    <div class="width_50 center fs_14 float_l padded_t_10">
+                        <p class="red_color padded_b_10 fs_16 padded_t_10">0</p>
+                        <p class="color_999 fs_14">间接销售</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+
+        new Vue({
+            el: '#app',
+            data: {
+                info: []
+            },
+            mounted: function() {
+                this.ajax();
+            },
+            methods: {
+                ajax: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/Gift',
+                        name: '销售礼包合计',
+                        query: {
+
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.info = ret.data;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>

@@ -1,0 +1,51 @@
+.checked_con {
+    width: 30px;
+    height: 75px;
+}
+
+.checked_con input {
+    position: relative;
+    top: 25px;
+}
+
+.check_text {
+    width: calc(100% - 40px);
+}
+
+.check_text_img {
+    width: 80px;
+    padding-right: 5px;
+    height: 80px;
+}
+
+.check_text_img img {
+    width: 75px;
+}
+
+.check_text_info {
+    width: calc(100% - 80px);
+    height: 80px;
+}
+
+.check_text_info p:nth-child(2) {
+    position: relative;
+    top: -5px;
+}
+
+.check_text_info p:nth-child(3) {
+    position: absolute;
+    bottom: 0;
+}
+
+#main {
+    padding-bottom: 60px;
+}
+
+.aui-list-item-right{
+    position: absolute;
+    right: -10px;
+    bottom: 0;
+}
+.aui-bar-btn-item{
+    border-color:#f0f0f0!important;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title二维码</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/my/qr_code.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">二维码</div>
+        </header>
+        <div id="main" class="main_padded_t">
+            <img class="banner" src="../../res/images/user/share.png" alt="">
+            <input type="hidden" id="text" v-model="value ">
+            <div id="qrcode" class="padded_10 bg_f radius_4"></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script src="../../res/script/QRcode/qrcode.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                value: api.pageParam.qr_code,
+                img_info: ''
+            },
+            mounted: function() {
+
+            },
+            methods: {
+                htmlToimg: function(e) {
+
+                }
+            }
+        })
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            width: 150,
+            height: 150
+        });
+        function makeCode() {
+            var elText = document.getElementById("text");
+            if (!elText.value) {
+                alert("Input a text");
+                elText.focus();
+                return;
+            }
+            qrcode.makeCode(elText.value);
+        }
+
+        makeCode();
+    }
+</script>
+
+</html>

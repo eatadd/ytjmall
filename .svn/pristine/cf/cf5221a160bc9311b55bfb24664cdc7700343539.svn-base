@@ -1,0 +1,15 @@
+.footer {
+    position: fixed;
+    bottom: 0;
+}
+
+html, body {
+    background: #f0f0f0;
+}
+
+.aui-chat {
+    padding-bottom: 50px;
+}
+.send_input{
+    padding: 3px 10px 1px 10px;
+}

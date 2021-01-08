@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>订单详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../res/aui/css/aui.css">
+    <link rel="stylesheet" href="../../res/css/main.css">
+    <link rel="stylesheet" href="../../res/css/order/order_details.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <header class="aui-bar aui-bar-nav aui-bar-light header">
+            <div class="aui-pull-left aui-btn" onclick="utils.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </div>
+            <div class="aui-title">订单详情</div>
+        </header>
+        <div id="main" class="main_padded_t main_padded_b">
+            <!-- 地址选择 -->
+            <div class="padded_10">
+                <div class="bg_f radius_4">
+                    <div class="aui-content">
+                        <ul class="aui-list aui-media-list">
+                            <li class="aui-list-item aui-list-item-middle">
+                                <div class="aui-media-list-item-inner">
+                                    <div class="aui-list-item-media" style="width: 1.3rem;">
+                                        <i class="aui-iconfont aui-icon-location"></i>
+                                    </div>
+                                    <div class="aui-list-item-inner">
+                                        <div class="aui-list-item-text">
+                                            <div class="aui-list-item-title aui-font-size-14">{{info.full_name}} {{info.mobile}}</div>
+                                        </div>
+                                        <div class="aui-list-item-text aui-ellipsis-1o">
+                                            {{info.address}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- 列表 -->
+            <div class="list">
+                <div class="padded_r_10 padded_l_10 padded_b_10">
+                    <!-- 从此循环 -->
+                    <div class="padded_t_10 padded_l_10 padded_r_10 bg_f radius_4" v-for="(i,index) in detail" :key:="index">
+                        <div class="img_con float_l padded_t_5">
+                            <img :src="utils.base_iamge + i.image_name" alt="">
+                        </div>
+                        <div class="list_info float_l padded_l_10">
+                            <p class="fs_16 text_1">{{i.p_title}}</p>
+                            <p class="text_1 color_999 fs_14">{{i.p_specs}} * {{i.number}}</p>
+                            <p class="text_1 m_price">￥{{i.price}}</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 运费 -->
+            <div class="padded_l_10 padded_r_10 padded_b_10">
+                <div class="padded_l_10 padded_r_10 padded_t_5 padded_b_5 bg_f radius_4">
+                    <div class="padded_t_5 padded_b_5">
+                        <span class="fs_14 color_333">运费</span>
+                        <i class="fs_14 color_666 float_r list_text_r">免运费</i>
+                    </div>
+                    <div class="padded_t_5 padded_b_5">
+                        <span class="fs_14 color_333">现金券</span>
+                        <i class="fs_14 color_666 float_r list_text_r">无</i>
+                    </div>
+                </div>
+            </div>
+            <!-- 订单快递 -->
+            <section class="aui-content">
+                <div class="aui-timeline">
+                    <!-- 从此循环 -->
+                    <div class="aui-timeline-item">
+                        <div class="aui-timeline-item-label aui-bg-info text-light fff radius_4">2020年1月8日</div>
+                        <div class="aui-timeline-item-inner">
+                            <div class="aui-card-list radius_4">
+                                <div class="aui-card-list-header aui-border-b">
+                                    <div class="fs_14">正在揽件</div>
+                                    <i class="aui-iconfont aui-icon-star aui-text-danger"></i>
+                                </div>
+                                <div class="aui-card-list-content-padded fs_14889">
+                                    快递已到达xxx
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- <div class="padded_10 footer">
+                <div class="price_out_btn center radius_4 fff m_back padded_t_10 padded_b_10" v-if="type == 0">
+                    去付款
+                </div>
+                <div class="price_out_btn center radius_4 fff m_back padded_t_10 padded_b_10" v-else="type == 1">
+                    确认收货
+                </div>
+            </div> -->
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../res/vue/vue.js"></script>
+<script type="text/javascript" src="../../res/script/utils.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($api.dom('header'));
+        new Vue({
+            el: '#app',
+            data: {
+                type: 1,
+                id: api.pageParam.id,
+                info: [],
+                detail: []
+            },
+            mounted: function() {
+                this.init();
+            },
+            methods: {
+                init: function() {
+                    this_ = this;
+                    utils.request({
+                        url: utils.base_domain + '/api/user/UserOrderDetail',
+                        name: '消费者订单详细',
+                        query: {
+                            id: this.id
+                        },
+                        success: function(ret) {
+                            if (ret.code == 1) {
+                                this_.info = ret.data.order;
+                                this_.detail = ret.data.detail;
+                            } else {
+                                api.toast({
+                                    msg: ret.message,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                            }
+                        },
+                        error: function(err) {
+                            console.log('err' + JSON.stringify(err));
+                        }
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</html>
